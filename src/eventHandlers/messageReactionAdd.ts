@@ -6,8 +6,9 @@ export default class MessageReactionAddEventHandler {
         messageReaction: Discord.MessageReaction,
         user: Discord.User
     ) {
-        if (messageReaction.message.partial)
+        if (messageReaction.message.partial) {
             await messageReaction.message.fetch();
+        }
         await ReactionHandler.runCallback(messageReaction, user);
     }
 }
