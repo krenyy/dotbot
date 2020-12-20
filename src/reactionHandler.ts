@@ -92,7 +92,9 @@ export default class ReactionHandler {
         const json = await this.decode(message.embeds[0].footer.text);
         json.reactions[emoji.codePointAt(0).toString(16)] = callback;
         await message.edit(
-            message.embeds[0].setFooter(await this.encode(json))
+            new Discord.MessageEmbed(message.embeds[0]).setFooter(
+                await this.encode(json)
+            )
         );
         await message.react(emoji);
     }
@@ -107,7 +109,9 @@ export default class ReactionHandler {
         const json = await this.decode(message.embeds[0].footer.text);
         delete json.reactions[emoji.codePointAt(0).toString(16)];
         await message.edit(
-            message.embeds[0].setFooter(await this.encode(json))
+            new Discord.MessageEmbed(message.embeds[0]).setFooter(
+                await this.encode(json)
+            )
         );
     }
 
@@ -116,7 +120,9 @@ export default class ReactionHandler {
         const json = await this.decode(message.embeds[0].footer.text);
         json.reactions = {};
         await message.edit(
-            message.embeds[0].setFooter(await this.encode(json))
+            new Discord.MessageEmbed(message.embeds[0]).setFooter(
+                await this.encode(json)
+            )
         );
     }
 
