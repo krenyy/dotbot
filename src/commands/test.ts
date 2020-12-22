@@ -14,6 +14,9 @@ export default class TestCommand implements Command {
                 .setDescription("TEST")
         );
 
-        await msg.registerRecyclable("🧡");
+        await msg.registerReactionButton("🧡", (messageReaction, user) => {
+            console.log("AHOJ");
+        });
+        await msg.registerRecyclable("🗑");
     }
 }
