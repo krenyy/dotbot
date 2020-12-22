@@ -83,13 +83,11 @@ export default class PlayCommand implements Command {
 
         dispatcher.once("finish", async () => {
             connection.disconnect();
-            console.log("dispatcher finish");
         });
 
         connection.once("disconnect", async () => {
             stream.destroy();
             await msg.delete();
-            console.log("connection disconnect");
         });
 
         const videoInfo = await ytdl.getInfo(args[0]);
