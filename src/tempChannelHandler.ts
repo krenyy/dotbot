@@ -41,8 +41,8 @@ export default class TempChannelHandler {
             return;
         }
 
-        for (const [, member] of state.channel.members) {
-            await member.voice.kick();
+        if (state.member.user.bot) {
+            return;
         }
 
         for (const [, channel] of category.children) {
