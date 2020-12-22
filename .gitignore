@@ -1,6 +1,3 @@
 build/
 node_modules/
 yarn-error.log
-
-**/*.js
-**/*.js.map
