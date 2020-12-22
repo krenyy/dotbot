@@ -49,13 +49,13 @@ type ReactionCallback = (
     user: Discord.User
 ) => any;
 
+type FooterData = {
+    author: string;
+    reactions: { [key: string]: ReactionCallback };
+};
+
 export default class ReactionHandler {
-    static async decode(
-        obj: string
-    ): Promise<{
-        author: string;
-        reactions: { [key: string]: ReactionCallback };
-    }> {
+    static async decode(obj: string): Promise<FooterData> {
         return JSON.parse(
             Buffer.from(obj, "base64").toString("binary"),
             (key, value) => {
@@ -64,15 +64,14 @@ export default class ReactionHandler {
                     value.startsWith("/Function(") &&
                     value.endsWith(")/")
                 ) {
-                    value = value.substring(10, value.length - 2);
-                    return eval(value);
+                    return eval(value.substring(10, value.length - 2));
                 }
                 return value;
             }
         );
     }
 
-    static async encode(obj: {}): Promise<string> {
+    static async encode(obj: FooterData): Promise<string> {
         return Buffer.from(
             JSON.stringify(obj, function (key, value) {
                 if (typeof value === "function") {
@@ -143,37 +142,23 @@ export default class ReactionHandler {
         messageReaction: Discord.MessageReaction,
         user: Discord.User
     ) {
-        if (messageReaction.message.author !== messageReaction.client.user) {
-            return;
-        }
+        const message = messageReaction.message;
 
-        if (user === messageReaction.message.author) {
-            return;
-        }
+        if (message.author !== messageReaction.client.user) return;
+        if (user === message.author) return;
+        if (user.bot) return;
 
-        if (user.bot) {
-            return;
-        }
-
-        if (
-            messageReaction.message.channel.type !== "dm" &&
-            user.id !== messageReaction.client.user.id
-        ) {
+        if (user !== messageReaction.client.user) {
             await messageReaction.users.remove(user);
         }
 
-        const json = await this.decode(
-            messageReaction.message.embeds[0].footer.text
-        );
+        const embed = message.embeds[0];
+        const emoji = messageReaction.emoji;
+        const emojiUnicode = emoji.name.codePointAt(0).toString(16);
+        const json = await this.decode(embed.footer.text);
 
-        if (
-            messageReaction.emoji.name.codePointAt(0).toString(16) in
-                json.reactions &&
-            !user.bot
-        ) {
-            await json.reactions[
-                messageReaction.emoji.name.codePointAt(0).toString(16)
-            ](messageReaction, user);
+        if (emojiUnicode in json.reactions) {
+            await json.reactions[emojiUnicode](messageReaction, user);
         }
     }
 }
