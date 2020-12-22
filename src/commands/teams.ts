@@ -93,23 +93,6 @@ export default class TeamsCommand implements Command {
                 )
         );
 
-        await msg.registerReactionButton(
-            "🔀",
-            async (messageReaction, user) => {
-                await msg.edit(
-                    new Discord.MessageEmbed()
-                        .default(message.author)
-                        .setTitle("Teams")
-                        .addFields(
-                            await this.shuffle(
-                                players,
-                                teamCount,
-                                playerCountPerTeam
-                            )
-                        )
-                );
-            }
-        );
         await msg.registerRecyclable();
     }
 }
