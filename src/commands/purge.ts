@@ -8,10 +8,13 @@ export default class PurgeCommand implements Command {
         "Purges 100 text messages from current channel.";
 
     static async execute(message: Discord.Message, args: Array<string>) {
-        let messagesToDelete = await message.channel.messages.fetch({
-            limit: 100,
-        });
-
+        let messagesToDelete = (
+            await message.channel.messages.fetch({
+                limit: 100,
+            })
+        ).filter(
+            (m) => m.createdTimestamp > Date.now() - 14 * 24 * 60 * 60 * 1000
+        );
         if (!messagesToDelete.size) {
             await (
                 await message.channel.send(
@@ -49,7 +52,8 @@ export default class PurgeCommand implements Command {
                         m.id !== messageReaction.message.id &&
                         m.createdTimestamp <=
                             messageReaction.message.createdTimestamp
-                )
+                ),
+                true
             );
 
             const embedSuccess = new Discord.MessageEmbed()
