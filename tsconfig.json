@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "ES2020",
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "ES2020",
+    "declaration": true,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "outDir": "./build"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "build"
   ]
 }
