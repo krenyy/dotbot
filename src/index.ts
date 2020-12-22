@@ -4,6 +4,12 @@ import MessageReactionAddEventHandler from "./eventHandlers/messageReactionAdd.j
 import VoiceStateUpdateEventHandler from "./eventHandlers/voiceStateUpdate.js";
 import ReadyEventHandler from "./eventHandlers/ready.js";
 
+declare module "discord.js" {
+    interface Client {
+        owner: Discord.User;
+    }
+}
+
 process.on("unhandledRejection", (reason, promise) => {
     console.error(`[UNHANDLED REJECTION] ${reason}`);
     console.log(promise);
@@ -13,7 +19,7 @@ const client = new Discord.Client({
     partials: ["MESSAGE", "CHANNEL", "REACTION"],
 })
     // Logging
-    .on("debug", (info) => console.debug(`[DEBUG] ${info}`))
+    //.on("debug", (info) => console.debug(`[DEBUG] ${info}`))
     .on("error", (error) => console.error(`[ERROR] ${error}`))
     .on("warn", (warning) => console.warn(`[WARNING] ${warning}`))
     // ---
