@@ -116,15 +116,15 @@ class DiscordMusicPlayer {
     async loop(guild: Discord.Guild) {
         const guildData = await this.getGuildData(guild);
 
-        if (guildData.currentlyPlaying) {
-            guildData.loop = !guildData.loop;
+        if (!guildData.currentlyPlaying) return;
 
-            await guildData.statusMessage.edit(
-                new BetterEmbed(guildData.statusMessage.embeds[0]).setTitle(
-                    `Playing${guildData.loop ? " 🔁" : ""}`
-                )
-            );
-        }
+        guildData.loop = !guildData.loop;
+
+        await guildData.statusMessage.edit(
+            new BetterEmbed(guildData.statusMessage.embeds[0]).setTitle(
+                `Playing${guildData.loop ? " 🔁" : ""}`
+            )
+        );
     }
 
     async updateStatusMessageQueue(guild: Discord.Guild) {
