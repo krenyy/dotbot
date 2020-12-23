@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import client from "../index.js";
+import client from "../../index.js";
 
 export default class TempChannelHandler {
     public static readonly prefix = "*";

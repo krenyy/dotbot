@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import TempChannelHandler from "../customHandlers/tempChannelHandler.js";
+import TempChannelHandler from "./custom/tempChannelHandler.js";
 
 export default class VoiceStateUpdateEventHandler {
     static async execute(

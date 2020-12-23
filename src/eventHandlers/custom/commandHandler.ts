@@ -1,9 +1,9 @@
-import DiscordCommand from "../commands/base.js";
-import HelpCommand from "../commands/help.js";
-import PlayCommand from "../commands/play.js";
-import PurgeCommand from "../commands/purge.js";
-import TeamsCommand from "../commands/teams.js";
-import TestCommand from "../commands/test.js";
+import DiscordCommand from "../../commands/base.js";
+import HelpCommand from "../../commands/help.js";
+import PlayCommand from "../../commands/play.js";
+import PurgeCommand from "../../commands/purge.js";
+import TeamsCommand from "../../commands/teams.js";
+import TestCommand from "../../commands/test.js";
 import Discord from "discord.js";
 
 export default class CommandHandler {
