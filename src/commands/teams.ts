@@ -1,10 +1,9 @@
-import { Command } from "../commandHandler.js";
 import Discord from "discord.js";
+import DiscordCommand from "./base.js";
+import BetterEmbed from "../util/betterembed.js";
 
-// noinspection TypeScriptValidateJSTypes
-export default class TeamsCommand implements Command {
-    public static readonly cmd = "teams";
-
+export default class TeamsCommand implements DiscordCommand {
+    public static readonly id = "teams";
     public static readonly description =
         "Divides current voice channel members to teams.";
 
@@ -48,16 +47,11 @@ export default class TeamsCommand implements Command {
 
     static async execute(message: Discord.Message, args: Array<string>) {
         if (!message.member.voice.channel) {
-            await (
-                await message.channel.send(
-                    new Discord.MessageEmbed()
-                        .default(message.author)
-                        .setTitle("Error")
-                        .setDescription(
-                            "You're not connected to a voice channel!"
-                        )
-                )
-            ).registerRecyclable();
+            await message.channel.send(
+                new BetterEmbed()
+                    .setError("You're not connected to a voice channel!")
+                    .setType("recyclable")
+            );
             return;
         }
 
@@ -73,26 +67,21 @@ export default class TeamsCommand implements Command {
         const playerCountPerTeam = Math.floor(players.length / teamCount);
 
         if (!playerCountPerTeam) {
-            await (
-                await message.channel.send(
-                    new Discord.MessageEmbed()
-                        .default(message.author)
-                        .setTitle("Error")
-                        .setDescription("Not enough users in voice channel!")
-                )
-            ).registerRecyclable();
+            await message.channel.send(
+                new BetterEmbed()
+                    .setAuthor(message.author)
+                    .setError("Not enough users in voice channel!")
+                    .setType("recyclable")
+            );
             return;
         }
 
-        const msg = await message.channel.send(
-            new Discord.MessageEmbed()
-                .default(message.author)
+        await message.channel.send(
+            new BetterEmbed()
                 .setTitle("Teams")
                 .addFields(
                     await this.shuffle(players, teamCount, playerCountPerTeam)
                 )
         );
-
-        await msg.registerRecyclable();
     }
 }

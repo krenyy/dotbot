@@ -1,5 +1,5 @@
 import client from "../index.js";
-import TempChannelHandler from "../tempChannelHandler.js";
+import TempChannelHandler from "../customHandlers/tempChannelHandler.js";
 
 export default class ReadyEventHandler {
     static async execute() {

@@ -1,22 +1,11 @@
-import { Command } from "../commandHandler.js";
 import Discord from "discord.js";
+import DiscordCommand from "./base.js";
 
-export default class TestCommand implements Command {
-    public static readonly cmd = "test";
-
+export default class TestCommand implements DiscordCommand {
+    public static readonly id = "test";
     public static readonly description = "Prints this message.";
 
     static async execute(message: Discord.Message, args: Array<string>) {
-        const msg = await message.channel.send(
-            new Discord.MessageEmbed()
-                .default(message.author)
-                .setTitle("TEST")
-                .setDescription("TEST")
-        );
-
-        await msg.registerReactionButton("🧡", (messageReaction, user) => {
-            console.log("AHOJ");
-        });
-        await msg.registerRecyclable("🗑");
+        console.log("TEST");
     }
 }

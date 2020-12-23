@@ -1,8 +1,8 @@
 import Discord from "discord.js";
-import client from "./index.js";
+import client from "../index.js";
 
 export default class TempChannelHandler {
-    public static readonly prefix = "-=TEMP=-";
+    public static readonly prefix = "*";
 
     static async create(state: Discord.VoiceState) {
         const tempChannelsName = state.channel.name.slice(2);

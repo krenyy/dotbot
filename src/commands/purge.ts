@@ -1,70 +1,43 @@
-import { Command } from "../commandHandler.js";
 import Discord from "discord.js";
+import BetterEmbed from "../util/betterembed.js";
+import DiscordCommand from "./base.js";
 
-export default class PurgeCommand implements Command {
-    public static readonly cmd = "purge";
-
+export default class PurgeCommand implements DiscordCommand {
+    public static readonly id = "purge";
     public static readonly description =
-        "Purges 100 text messages from current channel.";
+        "Purges up to 100 text messages from current channel.";
 
     static async execute(message: Discord.Message, args: Array<string>) {
-        let messagesToDelete = (
+        const messagesToDelete = (
             await message.channel.messages.fetch({
                 limit: 100,
             })
-        ).filter(
-            (m) => m.createdTimestamp > Date.now() - 14 * 24 * 60 * 60 * 1000
-        );
+        ) /** Filters out all messages older than 14 days */
+            .filter(
+                (m) =>
+                    m.createdTimestamp > Date.now() - 14 * 24 * 60 * 60 * 1000
+            );
+
         if (!messagesToDelete.size) {
-            await (
-                await message.channel.send(
-                    new Discord.MessageEmbed()
-                        .default(message.author)
-                        .setTitle("Error")
-                        .setDescription("No messages to remove!")
-                )
-            ).registerRecyclable();
+            await message.channel.send(
+                new BetterEmbed()
+                    .setAuthor(message.author)
+                    .setError("No messages to remove!")
+                    .setType("recyclable")
+            );
             return;
         }
 
-        const embedAsk = new Discord.MessageEmbed()
-            .default(message.author)
-            .setTitle(
-                `Delete${message.channel.type === "dm" ? " DM" : ""} messages?`
-            )
-            .setDescription(
-                `This will remove ${messagesToDelete.size}${
-                    message.channel.type === "dm" ? " bot" : ""
-                } messages.\n` + "Continue?"
-            );
+        const deletedMessages = await (message.channel as Discord.TextChannel).bulkDelete(
+            messagesToDelete,
+            true
+        );
 
-        const msg = await message.channel.send(embedAsk);
-
-        await msg.registerReactionButton("☑", async (messageReaction, user) => {
-            const deletedMessages = await (messageReaction.message
-                .channel as Discord.TextChannel).bulkDelete(
-                (
-                    await messageReaction.message.channel.messages.fetch({
-                        limit: 100,
-                    })
-                ).filter(
-                    (m) =>
-                        m.id !== messageReaction.message.id &&
-                        m.createdTimestamp <=
-                            messageReaction.message.createdTimestamp
-                ),
-                true
-            );
-
-            const embedSuccess = new Discord.MessageEmbed()
-                .default(messageReaction.message.author)
-                .setTitle("Success")
-                .setDescription(`Removed ${deletedMessages.size} messages!`);
-
-            await messageReaction.message.unregisterReactionButtons();
-            await messageReaction.message.edit(embedSuccess);
-            await messageReaction.message.registerRecyclable();
-        });
-        await msg.registerRecyclable("❌");
+        await message.channel.send(
+            new BetterEmbed()
+                .setAuthor(message.author)
+                .setSuccess(`Removed ${deletedMessages.size} messages!`)
+                .setType("recyclable")
+        );
     }
 }
