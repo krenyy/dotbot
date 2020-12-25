@@ -80,14 +80,6 @@ export default class ReactionButtonHandler {
         messageReaction: Discord.MessageReaction,
         user: Discord.User
     ) {
-        if (messageReaction.message.partial) {
-            await messageReaction.message.fetch();
-        }
-
-        if (user.partial) {
-            await user.fetch();
-        }
-
         if (user.bot) return;
 
         await messageReaction.users.remove(user);

@@ -6,6 +6,9 @@ export default class MessageReactionAddEventHandler {
         messageReaction: Discord.MessageReaction,
         user: Discord.User
     ) {
+        if (messageReaction.partial) await messageReaction.fetch();
+        if (user.partial) await user.fetch();
+
         await ReactionButtonHandler.execute(messageReaction, user);
     }
 }
