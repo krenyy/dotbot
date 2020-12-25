@@ -4,208 +4,208 @@ import yts from "yt-search";
 import BetterEmbed from "./betterembed.js";
 import { getAverageColor } from "fast-average-color-node";
 
-class DiscordMusicPlayerGuildData {
-    public currentlyPlaying: Promise<ytdl.videoInfo>;
-    public statusMessage: Discord.Message;
-    public queueMessage: Discord.Message;
-    public queue: Array<Promise<ytdl.videoInfo>>;
-    public loop: boolean;
+class DiscordMusicPlayerQueueEntry {
+    author: Discord.User;
+    videoInfoPromise: Promise<ytdl.videoInfo>;
 
-    constructor() {
-        this.currentlyPlaying = undefined;
-        this.statusMessage = undefined;
-        this.queueMessage = undefined;
-        this.queue = new Array<Promise<ytdl.videoInfo>>();
-        this.loop = false;
+    constructor(
+        author: Discord.User,
+        videoInfoPromise: Promise<ytdl.videoInfo>
+    ) {
+        this.author = author;
+        this.videoInfoPromise = videoInfoPromise;
     }
 }
 
 class DiscordMusicPlayer {
-    private guilds: Map<Discord.Guild, DiscordMusicPlayerGuildData>;
+    private guild: Discord.Guild;
 
-    constructor() {
-        this.guilds = new Map<Discord.Guild, DiscordMusicPlayerGuildData>();
+    private currentlyPlaying: DiscordMusicPlayerQueueEntry;
+    private queue: Array<DiscordMusicPlayerQueueEntry>;
+
+    private statusEmbed: Discord.MessageEmbed;
+    private statusMessage: Discord.Message;
+
+    private isPaused: boolean;
+    private isLooping: boolean;
+
+    constructor(guild: Discord.Guild) {
+        this.guild = guild;
+
+        this.currentlyPlaying = undefined;
+        this.queue = new Array<DiscordMusicPlayerQueueEntry>();
+
+        this.statusEmbed = new BetterEmbed()
+            .setTitle("Playing")
+            .setType("musik");
+        this.statusMessage = undefined;
+
+        this.isPaused = false;
+        this.isLooping = false;
     }
 
-    async join(voiceChannel: Discord.VoiceChannel) {
-        await voiceChannel.join();
+    async join(message: Discord.Message) {
+        this.statusMessage = await message.channel.send(this.statusEmbed);
+
+        const connection = await message.member.voice.channel.join();
+
+        connection.on("disconnect", async () => {
+            this.statusMessage.delete().catch(() => {});
+
+            await DiscordMusicPlayerFactory.remove(this.guild);
+        });
     }
 
-    async play(
-        guild: Discord.Guild,
-        queueEntryPromise: Promise<ytdl.videoInfo>
-    ) {
-        const guildData = await this.getGuildData(guild);
+    async leave() {
+        this.guild.me.voice.connection.disconnect();
+    }
 
-        guildData.currentlyPlaying = queueEntryPromise;
+    async play(entry: DiscordMusicPlayerQueueEntry) {
+        this.currentlyPlaying = entry;
 
-        const connection = guild.me.voice.connection;
+        const connection = this.guild.me.voice.connection;
+
         if (!connection) return; // if for some reason bot is disconnected mid process
 
-        const queueEntry = await queueEntryPromise;
-        const queueEntryDetails = queueEntry.videoDetails;
+        const videoInfo = await entry.videoInfoPromise;
+        const videoDetails = videoInfo.videoDetails;
 
-        const stream = ytdl(queueEntryDetails.video_url, {
-            quality: "highestaudio",
-            filter: "audioonly",
-            highWaterMark: 1 << 25,
-        });
-
-        const dispatcher = connection.play(stream);
-
-        const thumbnailURL = await this.getBestThumbnailURL(queueEntryDetails);
-        const averageColor = (await getAverageColor(thumbnailURL)).hex;
-
-        await guildData.statusMessage.edit(
-            new Discord.MessageEmbed(guildData.statusMessage.embeds[0])
-                .setDescription(
-                    `[${queueEntryDetails.title}](${queueEntryDetails.video_url})`
-                )
-                .setThumbnail(thumbnailURL)
-                .setColor(averageColor)
+        const dispatcher = connection.play(
+            ytdl(videoDetails.video_url, {
+                quality: "highestaudio",
+                filter: "audioonly",
+                highWaterMark: 1 << 25,
+            })
         );
 
-        dispatcher.removeAllListeners();
-        connection.removeAllListeners();
-
-        dispatcher.once("finish", async () => {
-            stream.destroy();
-            await this.next(guild);
+        dispatcher.removeAllListeners("finish");
+        dispatcher.on("finish", async () => {
+            await this.next();
         });
 
-        connection.once("disconnect", async () => {
-            const guildData = this.guilds.get(guild);
-
-            guildData.statusMessage.delete().catch(() => {});
-
-            this.guilds.delete(guild);
-        });
+        await this.updateStatusMessage();
     }
 
-    async next(guild: Discord.Guild) {
-        const guildData = this.guilds.get(guild);
+    async next() {
+        if (this.isLooping) this.queue.push(this.currentlyPlaying);
 
-        if (guildData.loop) {
-            guildData.queue.push(guildData.currentlyPlaying);
-        }
-
-        const next = guildData.queue.shift();
+        const next = this.queue.shift();
 
         if (next) {
-            await this.play(guild, next);
-            await this.updateStatusMessageQueue(guild);
+            await this.play(next);
         } else {
-            await this.leave(guild);
+            await this.leave();
         }
     }
 
-    async leave(guild: Discord.Guild) {
-        guild.me.voice.connection.disconnect();
+    /** Broken for now, causes speedups and skipping */
+    async resume() {
+        if (!this.isPaused) return;
+
+        this.guild.me.voice.connection.dispatcher.resume();
+        this.isPaused = false;
+
+        await this.updateStatusMessage();
     }
 
     /** Broken for now, causes speedups and skipping */
-    async resume(guild: Discord.Guild) {
-        guild.me.voice.connection.dispatcher.resume();
+    async pause() {
+        if (this.isPaused) return;
+
+        this.guild.me.voice.connection.dispatcher.pause(true);
+        this.isPaused = true;
+
+        await this.updateStatusMessage();
     }
 
-    /** Broken for now, causes speedups and skipping */
-    async pause(guild: Discord.Guild) {
-        guild.me.voice.connection.dispatcher.pause(true);
+    async loop() {
+        if (!this.currentlyPlaying) return;
+
+        this.isLooping = !this.isLooping;
+
+        await this.updateStatusMessage();
     }
 
-    async loop(guild: Discord.Guild) {
-        const guildData = await this.getGuildData(guild);
+    async queryToUrl(queryOrUrl: string) {
+        if (ytdl.validateURL(queryOrUrl)) return queryOrUrl;
 
-        if (!guildData.currentlyPlaying) return;
-
-        guildData.loop = !guildData.loop;
-
-        await guildData.statusMessage.edit(
-            new BetterEmbed(guildData.statusMessage.embeds[0]).setTitle(
-                `Playing${guildData.loop ? " 🔁" : ""}`
-            )
-        );
-    }
-
-    async updateStatusMessageQueue(guild: Discord.Guild) {
-        const guildData = await this.getGuildData(guild);
-
-        const embed = new BetterEmbed(guildData.statusMessage.embeds[0]);
-
-        if (guildData.queue.length) {
-            const queue = new Array<string>();
-
-            for (const [i, queueEntryPromise] of guildData.queue.entries()) {
-                if (i >= 10) break;
-
-                const queueEntry = await queueEntryPromise;
-                const queueEntryDetails = queueEntry.videoDetails;
-
-                queue.push(queueEntryDetails.title);
-            }
-
-            embed.fields = [
-                {
-                    name: "Queue",
-                    value: queue.join("\n"),
-                    inline: false,
-                },
-            ];
-        } else {
-            embed.fields = [];
-        }
-
-        await guildData.statusMessage.edit(embed);
+        const videos = (await yts.search(queryOrUrl)).videos;
+        if (!videos.length) throw new Error("No videos found!");
+        return videos[0].url;
     }
 
     async addToQueue(message: Discord.Message, queryOrUrl: string) {
-        const guildData = await this.getGuildData(message.guild);
+        const url = await this.queryToUrl(queryOrUrl);
 
-        if (!guildData.statusMessage) {
-            guildData.statusMessage = await message.channel.send(
-                new BetterEmbed()
-                    .setAuthor(message.author)
-                    .setTitle("Playing")
-                    .setType("musik")
-            );
+        const entry = new DiscordMusicPlayerQueueEntry(
+            message.author,
+            ytdl.getInfo(url)
+        );
 
-            await this.join(message.member.voice.channel);
-        }
-
-        let url: string;
-        if (!ytdl.validateURL(queryOrUrl)) {
-            const videos = (await yts.search(queryOrUrl)).videos;
-
-            if (!videos.length) return;
-
-            url = videos[0].url;
+        if (!this.currentlyPlaying) {
+            await this.join(message);
+            await this.play(entry);
         } else {
-            url = queryOrUrl;
+            this.queue.push(entry);
+            await this.updateStatusMessage();
         }
-
-        const queueEntryPromise = ytdl.getInfo(url);
-
-        if (!guildData.currentlyPlaying) {
-            await this.play(message.guild, queueEntryPromise);
-        } else {
-            guildData.queue.push(queueEntryPromise);
-        }
-
-        await this.updateStatusMessageQueue(message.guild);
     }
 
-    async getGuildData(guild: Discord.Guild) {
-        if (!this.guilds.has(guild)) {
-            this.guilds.set(guild, new DiscordMusicPlayerGuildData());
-        }
+    async updateStatusMessage() {
+        const videoInfo = await this.currentlyPlaying.videoInfoPromise;
+        const videoDetails = videoInfo.videoDetails;
 
-        return this.guilds.get(guild);
+        const thumbnailURL = await this.getBestThumbnailURL(videoDetails);
+        const averageColor = await getAverageColor(thumbnailURL);
+        const averageColorHex = averageColor.hex;
+
+        await this.statusMessage.edit(
+            new BetterEmbed(this.statusEmbed)
+                .setAuthor(this.currentlyPlaying.author)
+                .setTitle(
+                    `${this.isLooping ? "🔁 " : ""}${
+                        this.isPaused ? "⏸️ " : "▶ "
+                    }${videoDetails.title}`
+                )
+                .setURL(videoDetails.video_url)
+                .setThumbnail(thumbnailURL)
+                .setColor(averageColorHex)
+                .setDescription(
+                    (this.queue.length ? "**Queue:**\n" : "") +
+                        (
+                            await Promise.all(
+                                this.queue.map(
+                                    async (entry) =>
+                                        (await entry.videoInfoPromise)
+                                            .videoDetails.title
+                                )
+                            )
+                        ).join("\n")
+                )
+        );
     }
 
-    async getBestThumbnailURL(queueEntryDetails: ytdl.MoreVideoDetails) {
-        const thumbnails = queueEntryDetails.thumbnails;
+    async getBestThumbnailURL(videoDetails: ytdl.MoreVideoDetails) {
+        const thumbnails = videoDetails.thumbnails;
         return thumbnails[thumbnails.length - 1].url;
     }
 }
 
-export default new DiscordMusicPlayer();
+export default class DiscordMusicPlayerFactory {
+    private static guildPlayers = new Map<Discord.Guild, DiscordMusicPlayer>();
+
+    static async get(guild: Discord.Guild) {
+        if (this.guildPlayers.has(guild)) {
+            return this.guildPlayers.get(guild);
+        }
+
+        const player = new DiscordMusicPlayer(guild);
+        this.guildPlayers.set(guild, player);
+
+        return player;
+    }
+
+    static async remove(guild: Discord.Guild) {
+        this.guildPlayers.delete(guild);
+    }
+}

@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import BetterEmbed from "../util/betterembed.js";
 import DiscordCommand from "./base.js";
-import musicPlayer from "../util/musicPlayer.js";
+import DiscordMusicPlayerFactory from "../util/musicPlayer.js";
 
 export default class PlayCommand implements DiscordCommand {
     public static readonly id = "play";
@@ -44,6 +44,7 @@ export default class PlayCommand implements DiscordCommand {
             return;
         }
 
-        await musicPlayer.addToQueue(message, args.join(" "));
+        const player = await DiscordMusicPlayerFactory.get(message.guild);
+        await player.addToQueue(message, args.join(" "));
     }
 }

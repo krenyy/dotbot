@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import musicPlayer from "../../util/musicPlayer.js";
+import DiscordMusicPlayerFactory from "../../util/musicPlayer.js";
 
 type ReactionCallback = (
     messageReaction: Discord.MessageReaction,
@@ -27,10 +27,8 @@ export default class ReactionButtonHandler {
                 const message = messageReaction.message;
                 const guild = message.guild;
                 const voiceState = guild.me.voice;
-                const connection = voiceState ? voiceState.connection : null;
-                const dispatcher = connection ? connection.dispatcher : null;
 
-                if (!connection) {
+                if (!voiceState) {
                     await message.delete();
                 }
 
@@ -39,23 +37,21 @@ export default class ReactionButtonHandler {
 
                 if (!isInVoiceChannel) return;
 
+                const player = await DiscordMusicPlayerFactory.get(guild);
+
                 switch (messageReaction.emoji.name) {
                     case "🔁": {
-                        await musicPlayer.loop(guild);
+                        await player.loop();
                         break;
                     }
 
                     case "⏹": {
-                        if (connection) {
-                            connection.disconnect();
-                        }
+                        await player.leave();
                         break;
                     }
 
                     case "⏭": {
-                        if (connection && dispatcher) {
-                            dispatcher.emit("finish");
-                        }
+                        await player.next();
                         break;
                     }
                 }
