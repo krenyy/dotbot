@@ -5,6 +5,9 @@
   "main": "./build/index.js",
   "author": "Martin Kröner <kronerm9@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node ./build/index.js"
+  },
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "discord.js": "^12.5.1",
