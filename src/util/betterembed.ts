@@ -12,10 +12,22 @@ export default class BetterEmbed extends Discord.MessageEmbed {
     return this.setFooter(type);
   }
 
+  setInfo(description: string) {
+    return this.setTitle("Info")
+      .setDescription(description)
+      .setColor("#0090ff");
+  }
+
   setSuccess(description: string) {
     return this.setTitle("Success")
       .setDescription(description)
       .setColor("#00ff00");
+  }
+
+  setWarning(description: string) {
+    return this.setTitle("Warning")
+      .setDescription(description)
+      .setColor("#ffff00");
   }
 
   setError(description: string) {
