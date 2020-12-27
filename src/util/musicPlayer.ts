@@ -50,7 +50,7 @@ class DiscordMusicPlayer {
         const connection = await message.member.voice.channel.join();
 
         connection.on("disconnect", async () => {
-            this.statusMessage.delete().catch(() => {});
+            await this.statusMessage.delete().catch(() => {});
 
             await DiscordMusicPlayerFactory.remove(this.guild);
         });
