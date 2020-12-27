@@ -16,7 +16,7 @@ export default class ReadyEventHandler {
 
         await client.user.setPresence({
             activity: { name: `${CommandHandler.prefix}${HelpCommand.id}` },
-            status: "idle",
+            status: "online",
         });
 
         await TempChannelHandler.initialCleanup();
