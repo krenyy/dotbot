@@ -152,6 +152,11 @@ class DiscordMusicPlayer {
     }
 
     async updateStatusMessage() {
+        await this.updateStatusEmbed();
+        await this.statusMessage.edit(this.statusEmbed);
+    }
+
+    async updateStatusEmbed() {
         const videoInfo = await this.currentlyPlaying.videoInfoPromise;
         const videoDetails = videoInfo.videoDetails;
 
@@ -159,30 +164,28 @@ class DiscordMusicPlayer {
         const averageColor = await getAverageColor(thumbnailURL);
         const averageColorHex = averageColor.hex;
 
-        await this.statusMessage.edit(
-            new BetterEmbed(this.statusEmbed)
-                .setAuthor(this.currentlyPlaying.author)
-                .setTitle(
-                    `${this.isLooping ? "🔁 " : ""}${
-                        this.isPaused ? "⏸️ " : "▶ "
-                    }${videoDetails.title}`
-                )
-                .setURL(videoDetails.video_url)
-                .setThumbnail(thumbnailURL)
-                .setColor(averageColorHex)
-                .setDescription(
-                    (this.queue.length ? "**Queue:**\n" : "") +
-                        (
-                            await Promise.all(
-                                this.queue.map(
-                                    async (entry) =>
-                                        (await entry.videoInfoPromise)
-                                            .videoDetails.title
-                                )
+        this.statusEmbed = new BetterEmbed(this.statusEmbed)
+            .setAuthor(this.currentlyPlaying.author)
+            .setTitle(
+                `${this.isLooping ? "🔁 " : ""}${this.isPaused ? "⏸️ " : "▶ "}${
+                    videoDetails.title
+                }`
+            )
+            .setURL(videoDetails.video_url)
+            .setThumbnail(thumbnailURL)
+            .setColor(averageColorHex)
+            .setDescription(
+                (this.queue.length ? "**Queue:**\n" : "") +
+                    (
+                        await Promise.all(
+                            this.queue.map(
+                                async (entry) =>
+                                    (await entry.videoInfoPromise).videoDetails
+                                        .title
                             )
-                        ).join("\n")
-                )
-        );
+                        )
+                    ).join("\n")
+            );
     }
 
     async getBestThumbnailURL(videoDetails: ytdl.MoreVideoDetails) {
