@@ -3,7 +3,7 @@ import HelpCommand from "../../commands/help.js";
 import PlayCommand from "../../commands/play.js";
 import PurgeCommand from "../../commands/purge.js";
 import TeamsCommand from "../../commands/teams.js";
-import TestCommand from "../../commands/test.js";
+import EvalCommand from "../../commands/eval.js";
 import Discord from "discord.js";
 
 export default class CommandHandler {
@@ -13,7 +13,7 @@ export default class CommandHandler {
         PlayCommand,
         PurgeCommand,
         TeamsCommand,
-        TestCommand,
+        EvalCommand,
     ];
 
     static async execute(message: Discord.Message) {
