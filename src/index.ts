@@ -22,8 +22,6 @@ const client = new Discord.Client({
     .on("voiceStateUpdate", VoiceStateUpdateEventHandler.execute)
     .on("ready", ReadyEventHandler.execute);
 
-await client.login(
-    "***REMOVED***"
-);
+await client.login(process.env.KBOT_TOKEN);
 
 export default client;

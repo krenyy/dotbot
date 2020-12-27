@@ -2,7 +2,7 @@ import Discord from "discord.js";
 import client from "../../index.js";
 
 export default class TempChannelHandler {
-    public static readonly prefix = "*";
+    public static readonly prefix = process.env.KBOT_TMP_CHANNEL_PREFIX;
 
     static async create(state: Discord.VoiceState) {
         const tempChannelsName = state.channel.name.slice(2);
