@@ -6,7 +6,9 @@
   "author": "Martin Kröner <kronerm9@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node ./build/index.js"
+    "build": "tsc",
+    "start": "node ./build/index.js",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
