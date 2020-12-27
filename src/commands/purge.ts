@@ -5,7 +5,7 @@ import DiscordCommand from "./base.js";
 export default class PurgeCommand implements DiscordCommand {
     public static readonly id = "purge";
     public static readonly description =
-        "Purges up to 100 text messages from current channel.";
+        "Purges 100 text messages from current channel.";
 
     static async execute(message: Discord.Message, args: Array<string>) {
         const messagesToDelete = (
