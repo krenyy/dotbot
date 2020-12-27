@@ -7,29 +7,27 @@ import EvalCommand from "../../commands/eval.js";
 import Discord from "discord.js";
 
 export default class CommandHandler {
-    public static readonly prefix = process.env.KBOT_CMD_PREFIX;
-    public static commands: Array<typeof DiscordCommand> = [
-        HelpCommand,
-        PlayCommand,
-        PurgeCommand,
-        TeamsCommand,
-        EvalCommand,
-    ];
+  public static readonly prefix = process.env.KBOT_CMD_PREFIX;
+  public static commands: Array<typeof DiscordCommand> = [
+    HelpCommand,
+    PlayCommand,
+    PurgeCommand,
+    TeamsCommand,
+    EvalCommand,
+  ];
 
-    static async execute(message: Discord.Message) {
-        if (message.channel.type !== "text") return;
-        if (!message.content.startsWith(this.prefix)) return;
+  static async execute(message: Discord.Message) {
+    if (message.channel.type !== "text") return;
+    if (!message.content.startsWith(this.prefix)) return;
 
-        const [cmd, ...args] = message.content
-            .slice(this.prefix.length)
-            .split(" ");
+    const [cmd, ...args] = message.content.slice(this.prefix.length).split(" ");
 
-        await message.delete();
+    await message.delete();
 
-        const command = this.commands.find((command) => command.id === cmd);
+    const command = this.commands.find((command) => command.id === cmd);
 
-        if (!command) return;
+    if (!command) return;
 
-        await command.execute(message, args);
-    }
+    await command.execute(message, args);
+  }
 }

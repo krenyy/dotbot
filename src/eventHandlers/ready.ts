@@ -5,22 +5,22 @@ import HelpCommand from "../commands/help.js";
 import Discord from "discord.js";
 
 declare module "discord.js" {
-    interface Client {
-        owner: Discord.User;
-    }
+  interface Client {
+    owner: Discord.User;
+  }
 }
 
 export default class ReadyEventHandler {
-    static async execute() {
-        client.owner = await client.users.fetch(process.env.KBOT_OWNER_ID);
+  static async execute() {
+    client.owner = await client.users.fetch(process.env.KBOT_OWNER_ID);
 
-        await client.user.setPresence({
-            activity: { name: `${CommandHandler.prefix}${HelpCommand.id}` },
-            status: "online",
-        });
+    await client.user.setPresence({
+      activity: { name: `${CommandHandler.prefix}${HelpCommand.id}` },
+      status: "online",
+    });
 
-        await TempChannelHandler.initialCleanup();
+    await TempChannelHandler.initialCleanup();
 
-        console.log(`${client.user.tag} is ready to go!`);
-    }
+    console.log(`${client.user.tag} is ready to go!`);
+  }
 }
