@@ -1,5 +1,12 @@
 import client from "../index.js";
 import TempChannelHandler from "./custom/tempChannelHandler.js";
+import Discord from "discord.js";
+
+declare module "discord.js" {
+    interface Client {
+        owner: Discord.User;
+    }
+}
 
 export default class ReadyEventHandler {
     static async execute() {
