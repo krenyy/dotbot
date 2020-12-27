@@ -4,10 +4,23 @@ import MessageReactionAddEventHandler from "./eventHandlers/messageReactionAdd.j
 import VoiceStateUpdateEventHandler from "./eventHandlers/voiceStateUpdate.js";
 import ReadyEventHandler from "./eventHandlers/ready.js";
 
-process.on("unhandledRejection", (reason, promise) => {
-    console.error(`[UNHANDLED REJECTION] ${reason}`);
-    console.log(promise);
-});
+process
+    .on("unhandledRejection", (reason, promise) => {
+        console.error(`[UNHANDLED REJECTION] ${reason}`);
+        console.log(promise);
+    })
+    .on("SIGINT", (signal) => {
+        console.log(signal);
+        process.exit(0);
+    })
+    .on("SIGTERM", (signal) => {
+        console.log(signal);
+        process.exit(0);
+    })
+    .on("exit", (code) => {
+        console.log(code);
+        client.destroy();
+    });
 
 const client = new Discord.Client({
     partials: ["MESSAGE", "CHANNEL", "REACTION"],
