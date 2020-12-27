@@ -44,10 +44,8 @@ class DiscordMusicPlayer {
         this.isLooping = false;
     }
 
-    async join(message: Discord.Message) {
-        this.statusMessage = await message.channel.send(this.statusEmbed);
-
-        const connection = await message.member.voice.channel.join();
+    async join(voiceChannel: Discord.VoiceChannel) {
+        const connection = await voiceChannel.join();
 
         connection.on("disconnect", async () => {
             await this.statusMessage.delete().catch(() => {});
@@ -143,7 +141,9 @@ class DiscordMusicPlayer {
         );
 
         if (!this.currentlyPlaying) {
-            await this.join(message);
+            this.statusMessage = await message.channel.send(this.statusEmbed);
+
+            await this.join(message.member.voice.channel);
             await this.play(entry);
         } else {
             this.queue.push(entry);
