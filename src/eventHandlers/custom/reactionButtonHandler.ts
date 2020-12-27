@@ -27,13 +27,14 @@ export default class ReactionButtonHandler {
                 const message = messageReaction.message;
                 const guild = message.guild;
                 const voiceState = guild.me.voice;
+                const voiceChannel = voiceState.channel;
 
-                if (!voiceState) {
+                if (!voiceChannel) {
                     await message.delete();
                 }
 
                 const isInVoiceChannel =
-                    guild.member(user).voice.channel === voiceState.channel;
+                    guild.member(user).voice.channel === voiceChannel;
 
                 if (!isInVoiceChannel) return;
 
