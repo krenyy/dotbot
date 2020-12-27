@@ -5,10 +5,13 @@
   "main": "./build/index.js",
   "author": "Martin Kröner <kronerm9@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "15.5.0"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node ./build/index.js",
-    "postinstall": "npm run build"
+    "postinstall": "yarn build"
   },
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
