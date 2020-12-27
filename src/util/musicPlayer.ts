@@ -18,7 +18,7 @@ class DiscordMusicPlayerQueueEntry {
 }
 
 class DiscordMusicPlayer {
-    private guild: Discord.Guild;
+    private readonly guild: Discord.Guild;
 
     private currentlyPlaying: DiscordMusicPlayerQueueEntry;
     private queue: Array<DiscordMusicPlayerQueueEntry>;
