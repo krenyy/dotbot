@@ -1,5 +1,6 @@
 import Discord from "discord.js";
 import MessageEventHandler from "./eventHandlers/message.js";
+import MessageUpdateEventHandler from "./eventHandlers/messageUpdate.js";
 import MessageReactionAddEventHandler from "./eventHandlers/messageReactionAdd.js";
 import VoiceStateUpdateEventHandler from "./eventHandlers/voiceStateUpdate.js";
 import ReadyEventHandler from "./eventHandlers/ready.js";
@@ -31,6 +32,7 @@ const client = new Discord.Client({
   .on("warn", (warning) => console.warn(`[WARNING] ${warning}`))
   // ---
   .on("message", MessageEventHandler.execute)
+  .on("messageUpdate", MessageUpdateEventHandler.execute)
   .on("messageReactionAdd", MessageReactionAddEventHandler.execute)
   .on("voiceStateUpdate", VoiceStateUpdateEventHandler.execute)
   .on("ready", ReadyEventHandler.execute);
