@@ -29,14 +29,10 @@ export default class ReactionButtonHandler {
         const voiceState = guild.me.voice;
         const voiceChannel = voiceState.channel;
 
-        if (!voiceChannel) {
-          await message.delete();
-        }
-
         const isInVoiceChannel =
           guild.member(user).voice.channel === voiceChannel;
 
-        if (!isInVoiceChannel) return;
+        if (!isInVoiceChannel && user !== user.client.owner) return;
 
         const player = await DiscordMusicPlayerFactory.get(guild);
 
@@ -62,6 +58,8 @@ export default class ReactionButtonHandler {
   static async register(message: Discord.Message) {
     if (message.author !== message.client.user) return;
 
+    if (!message.embeds.length) return;
+
     const embed = message.embeds[0];
 
     const footer = embed.footer;
@@ -72,6 +70,7 @@ export default class ReactionButtonHandler {
 
     const type = this.messageTypes.get(embedType);
 
+    await message.reactions.removeAll();
     for (const reaction of type.reactions) {
       await message.react(reaction);
     }
