@@ -38,25 +38,26 @@ export default class EvalCommand implements DiscordCommand {
     const evalEmbed = new BetterEmbed()
       .setAuthor(message.author)
       .setInfo(codeBlock)
-      .setType("recyclable");
+      .setTitle("Running...");
+
     const evalMsg = await message.channel.send(evalEmbed);
 
+    async function sleep(ms: number) {
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, ms);
+      });
+    }
     try {
-      async function sleep(ms: number) {
-        return new Promise<void>((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, ms);
-        });
-      }
       const evalResult = await eval(`(async()=>{${evalQuery}})()`);
       await evalMsg.edit(
-        evalEmbed.setSuccess(
-          codeBlock + `**Output**\n\`\`\`ts\n${evalResult}\`\`\``
-        )
+        evalEmbed.setSuccess(codeBlock + evalResult).setType("recyclable")
       );
     } catch (e) {
-      await evalMsg.edit(evalEmbed.setError(codeBlock + e));
+      await evalMsg.edit(
+        evalEmbed.setError(codeBlock + e).setType("recyclable")
+      );
     }
   }
 }
