@@ -20,7 +20,7 @@ class DiscordMusicPlayer {
   private currentlyPlaying: DiscordMusicPlayerQueueEntry;
   private queue: Array<DiscordMusicPlayerQueueEntry>;
 
-  private statusEmbed: Discord.MessageEmbed;
+  private statusEmbed: BetterEmbed;
   private statusMessage: Discord.Message;
 
   private isPaused: boolean;
@@ -32,7 +32,7 @@ class DiscordMusicPlayer {
     this.currentlyPlaying = undefined;
     this.queue = new Array<DiscordMusicPlayerQueueEntry>();
 
-    this.statusEmbed = new BetterEmbed().setTitle("Playing").setType("musik");
+    this.statusEmbed = new BetterEmbed();
     this.statusMessage = undefined;
 
     this.isPaused = false;
@@ -43,7 +43,7 @@ class DiscordMusicPlayer {
     const connection = await voiceChannel.join();
 
     connection.on("disconnect", async () => {
-      await this.statusMessage.delete().catch(() => {});
+      await this.statusMessage.edit(this.statusEmbed.setType("recyclable"));
 
       await DiscordMusicPlayerFactory.remove(this.guild);
     });
@@ -148,6 +148,18 @@ class DiscordMusicPlayer {
 
   async updateStatusMessage() {
     await this.updateStatusEmbed();
+
+    const oldEmbed = this.statusMessage.embeds[0];
+    const newEmbed = this.statusEmbed;
+
+    if (
+      oldEmbed.title === newEmbed.title &&
+      (oldEmbed.description || "") === newEmbed.description &&
+      oldEmbed.author.name === newEmbed.author.name &&
+      oldEmbed.author.url === newEmbed.author.url &&
+      oldEmbed.author.iconURL === newEmbed.author.iconURL
+    )
+      return;
     await this.statusMessage.edit(this.statusEmbed);
   }
 
@@ -179,7 +191,8 @@ class DiscordMusicPlayer {
               )
             )
           ).join("\n")
-      );
+      )
+      .setType("musik");
   }
 
   async getBestThumbnailURL(videoDetails: ytdl.MoreVideoDetails) {
