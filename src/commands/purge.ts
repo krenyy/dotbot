@@ -13,9 +13,9 @@ export default class PurgeCommand implements DiscordCommand {
         limit: 100,
       })
     ) /** Filters out all messages older than 14 days */
-      .filter(
-        (m) => m.createdTimestamp > Date.now() - 14 * 24 * 60 * 60 * 1000
-      );
+      .filter((m) => m.createdTimestamp > Date.now() - 14 * 24 * 60 * 60 * 1000)
+      /** Filters out bot messages */
+      .filter((m) => m.author !== m.client.user);
 
     if (!messagesToDelete.size) {
       await message.channel.send(
