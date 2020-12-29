@@ -5,7 +5,7 @@ import js_beautify from "js-beautify";
 
 export default class EvalCommand implements DiscordCommand {
   public static readonly id = "eval";
-  public static readonly description = "Evaluates an expression.";
+  public static readonly description = "Evaluates a Javascript expression.";
 
   static async execute(message: Discord.Message, args: Array<string>) {
     if (message.author !== message.client.owner) {
@@ -33,7 +33,7 @@ export default class EvalCommand implements DiscordCommand {
       return;
     }
 
-    const codeBlock = `\`\`\`ts\n${js_beautify(evalQuery)}\`\`\`\n`;
+    const codeBlock = `\`\`\`js\n${js_beautify(evalQuery)}\`\`\`\n`;
 
     const evalEmbed = new BetterEmbed()
       .setAuthor(message.author)
