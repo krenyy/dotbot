@@ -77,6 +77,7 @@ export default class TeamsCommand implements DiscordCommand {
       new BetterEmbed()
         .setTitle("Teams")
         .addFields(await this.shuffle(players, teamCount, playerCountPerTeam))
+        .setType("recyclable")
     );
   }
 }
