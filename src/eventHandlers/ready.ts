@@ -29,6 +29,7 @@ export default class ReadyEventHandler {
       for (const [, message] of await textChannel.messages.fetch()) {
         if (message.author !== client.user) continue;
         if (message.system) continue;
+        if (message.embeds[0].footer.text === "recyclable") continue;
         await message.edit(
           new BetterEmbed(message.embeds[0]).setType("recyclable")
         );
