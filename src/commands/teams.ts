@@ -46,6 +46,7 @@ export default class TeamsCommand implements DiscordCommand {
     if (!message.member.voice.channel) {
       await message.channel.send(
         new BetterEmbed()
+          .setAuthor(message.author)
           .setError("You're not connected to a voice channel!")
           .setType("recyclable")
       );
@@ -53,6 +54,17 @@ export default class TeamsCommand implements DiscordCommand {
     }
 
     const parsedTeamCount = Number(args[0]);
+
+    if (parsedTeamCount < 2) {
+      await message.channel.send(
+        new BetterEmbed()
+          .setAuthor(message.author)
+          .setError("Bad number of teams!")
+          .setType("recyclable")
+      );
+      return;
+    }
+
     const teamCount = parsedTeamCount > 1 ? parsedTeamCount : 2;
 
     const players = Array.from(
@@ -67,7 +79,7 @@ export default class TeamsCommand implements DiscordCommand {
       await message.channel.send(
         new BetterEmbed()
           .setAuthor(message.author)
-          .setError("Not enough users in voice channel!")
+          .setError("Not enough users in your voice channel!")
           .setType("recyclable")
       );
       return;
@@ -75,7 +87,8 @@ export default class TeamsCommand implements DiscordCommand {
 
     await message.channel.send(
       new BetterEmbed()
-        .setTitle("Teams")
+        .setAuthor(message.author)
+        .setSuccess("", "Teams")
         .addFields(await this.shuffle(players, teamCount, playerCountPerTeam))
         .setType("recyclable")
     );
