@@ -13,12 +13,39 @@ export default class ReactionButtonHandler {
     .set("recyclable", {
       reactions: ["♻"],
       callback: async (messageReaction, user) => {
-        switch (messageReaction.emoji.name) {
-          case "♻": {
-            await messageReaction.message.delete();
-            break;
+        async function action() {
+          switch (messageReaction.emoji.name) {
+            case "♻": {
+              await messageReaction.message.delete().catch(() => {});
+              break;
+            }
           }
         }
+
+        const message = messageReaction.message;
+        const guild = message.guild;
+
+        const embed = message.embeds[0];
+        const embedAuthor = embed.author;
+
+        if (!embedAuthor) {
+          return await action();
+        }
+
+        const embedAuthorTag = embedAuthor.name;
+
+        const embedAuthorMember = guild.members.cache.find(
+          (member) => member.user.tag === embedAuthorTag
+        );
+
+        if (
+          embedAuthorMember &&
+          user !== embedAuthorMember.user &&
+          user !== user.client.owner
+        )
+          return;
+
+        return await action();
       },
     })
     .set("musik", {
