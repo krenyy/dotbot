@@ -43,7 +43,9 @@ class DiscordMusicPlayer {
     const connection = await voiceChannel.join();
 
     connection.on("disconnect", async () => {
-      await this.statusMessage.edit(this.statusEmbed.setType("recyclable"));
+      await this.statusMessage.edit(
+        this.statusEmbed.setAuthor(null).setType("recyclable")
+      );
 
       await DiscordMusicPlayerFactory.remove(this.guild);
     });
