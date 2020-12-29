@@ -3,6 +3,14 @@ import BetterEmbed from "../util/betterembed.js";
 import DiscordCommand from "./base.js";
 import js_beautify from "js-beautify";
 
+async function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+}
+
 export default class EvalCommand implements DiscordCommand {
   public static readonly id = "eval";
   public static readonly description = "Evaluates a Javascript expression.";
@@ -39,16 +47,10 @@ export default class EvalCommand implements DiscordCommand {
       .setAuthor(message.author)
       .setInfo(codeBlock)
       .setTitle("Running...");
-
     const evalMsg = await message.channel.send(evalEmbed);
 
-    async function sleep(ms: number) {
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, ms);
-      });
-    }
+    await sleep(500);
+
     try {
       const evalResult = await eval(`(async()=>{${evalQuery}})()`);
       await evalMsg.edit(
