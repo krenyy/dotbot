@@ -4,7 +4,11 @@ type BetterEmbedType = "recyclable" | "musik";
 
 export default class BetterEmbed extends Discord.MessageEmbed {
   setAuthor(author: Discord.User) {
-    super.setAuthor(author.id, author.avatarURL());
+    if (!author) {
+      super.author = null;
+    } else {
+      super.setAuthor(author.tag, author.avatarURL());
+    }
     return this;
   }
 
@@ -12,26 +16,26 @@ export default class BetterEmbed extends Discord.MessageEmbed {
     return this.setFooter(type);
   }
 
-  setInfo(description: string) {
-    return this.setTitle("Info")
+  setInfo(description: string, title?: string) {
+    return this.setTitle(title || "Info")
       .setDescription(description)
       .setColor("#0090ff");
   }
 
-  setSuccess(description: string) {
-    return this.setTitle("Success")
+  setSuccess(description: string, title?: string) {
+    return this.setTitle(title || "Success")
       .setDescription(description)
       .setColor("#00ff00");
   }
 
-  setWarning(description: string) {
-    return this.setTitle("Warning")
+  setWarning(description: string, title?: string) {
+    return this.setTitle(title || "Warning")
       .setDescription(description)
       .setColor("#ffff00");
   }
 
-  setError(description: string) {
-    return this.setTitle("Error")
+  setError(description: string, title?: string) {
+    return this.setTitle(title || "Error")
       .setDescription(description)
       .setColor("#ff0000");
   }
