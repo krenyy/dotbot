@@ -2,6 +2,10 @@ import Discord from "discord.js";
 import BetterEmbed from "../util/betterembed.js";
 import DiscordCommand from "./base.js";
 import js_beautify from "js-beautify";
+import axios from "axios";
+
+const _Discord = Discord;
+const _axios = axios;
 
 async function sleep(ms: number) {
   return new Promise<void>((resolve) => {
