@@ -9,6 +9,8 @@ export default class MessageReactionAddEventHandler {
     if (messageReaction.partial) await messageReaction.fetch();
     if (user.partial) await user.fetch();
 
-    await ReactionButtonHandler.execute(messageReaction, user);
+    if (messageReaction.message.author === user.client.user) {
+      await ReactionButtonHandler.execute(messageReaction, user);
+    }
   }
 }
