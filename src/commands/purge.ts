@@ -4,6 +4,7 @@ import DiscordCommand from "./base.js";
 
 export default class PurgeCommand implements DiscordCommand {
   public static readonly id = "purge";
+  public static readonly type = "ADMIN";
   public static readonly description =
     "Purges 100 text messages from current channel.";
 

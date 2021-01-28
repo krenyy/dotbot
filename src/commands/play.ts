@@ -5,6 +5,7 @@ import DiscordMusicPlayerFactory from "../util/musicPlayer.js";
 
 export default class PlayCommand implements DiscordCommand {
   public static readonly id = "play";
+  public static readonly type = "USER";
   public static readonly description = "Plays a video from Youtube.";
 
   static async execute(message: Discord.Message, args: Array<string>) {

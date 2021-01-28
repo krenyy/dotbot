@@ -4,6 +4,7 @@ import BetterEmbed from "../util/betterembed.js";
 
 export default class TeamsCommand implements DiscordCommand {
   public static readonly id = "teams";
+  public static readonly type = "USER";
   public static readonly description =
     "Divides current voice channel members to teams.";
 
