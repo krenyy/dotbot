@@ -13,10 +13,13 @@ declare module "discord.js" {
 
 export default class ReadyEventHandler {
   static async execute() {
-    client.owner = await client.users.fetch(process.env.KBOT_OWNER_ID);
+    client.owner = await client.users.fetch(process.env.DOTBOT_OWNER_ID);
 
     await client.user.setPresence({
-      activity: { name: `${CommandHandler.prefix}${HelpCommand.id}` },
+      activity: {
+        name: `${CommandHandler.prefix}${HelpCommand.id}`,
+        type: "LISTENING",
+      },
       status: "online",
     });
 

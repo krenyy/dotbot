@@ -2,23 +2,24 @@ import Discord from "discord.js";
 import client from "../../index.js";
 
 export default class TempChannelHandler {
-  public static readonly prefix = process.env.KBOT_TMP_CHANNEL_PREFIX;
+  public static readonly factoryPrefix = "➕ ";
+  public static readonly tempChannelPrefix = "⚠️ ";
 
   static async create(state: Discord.VoiceState) {
-    const tempChannelsName = state.channel.name.slice(2);
+    const tempChannelName = state.channel.name.slice(2);
 
     const categoryChannel = await state.guild.channels.create(
-      `${this.prefix} ${tempChannelsName}`,
+      `${this.tempChannelPrefix} ${tempChannelName}`,
       {
         type: "category",
       }
     );
 
-    const textChannel = await state.guild.channels.create(tempChannelsName, {
+    const textChannel = await state.guild.channels.create(tempChannelName, {
       parent: categoryChannel,
       type: "text",
     });
-    const voiceChannel = await state.guild.channels.create(tempChannelsName, {
+    const voiceChannel = await state.guild.channels.create(tempChannelName, {
       parent: categoryChannel,
       type: "voice",
     });
@@ -33,7 +34,7 @@ export default class TempChannelHandler {
       return;
     }
 
-    if (!category.name.startsWith(this.prefix)) {
+    if (!category.name.startsWith(this.tempChannelPrefix)) {
       return;
     }
 
@@ -57,7 +58,7 @@ export default class TempChannelHandler {
       for (const [, category] of guild.channels.cache.filter(
         (channel) =>
           channel.type === "category" &&
-          channel.name.startsWith(this.prefix) &&
+          channel.name.startsWith(this.tempChannelPrefix) &&
           !(channel as Discord.CategoryChannel).children
             .find((child) => child.type === "voice")
             .members.filter((member) => !member.user.bot).size

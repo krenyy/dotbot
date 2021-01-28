@@ -7,7 +7,7 @@ import EvalCommand from "../../commands/eval.js";
 import Discord from "discord.js";
 
 export default class CommandHandler {
-  public static readonly prefix = process.env.KBOT_CMD_PREFIX;
+  public static readonly prefix = ".";
   public static commands: Array<typeof DiscordCommand> = [
     HelpCommand,
     PlayCommand,

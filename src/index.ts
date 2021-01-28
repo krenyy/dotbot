@@ -37,6 +37,6 @@ const client = new Discord.Client({
   .on("voiceStateUpdate", VoiceStateUpdateEventHandler.execute)
   .on("ready", ReadyEventHandler.execute);
 
-await client.login(process.env.KBOT_TOKEN);
-
 export default client;
+
+await client.login(process.env.DOTBOT_TOKEN);
