@@ -2,7 +2,7 @@ import Discord from "discord.js";
 import ytdl from "ytdl-core";
 import yts from "yt-search";
 import BetterEmbed from "./betterembed.js";
-import { getAverageColor } from "fast-average-color-node";
+// import { getAverageColor } from "fast-average-color-node";
 
 class DiscordMusicPlayerQueueEntry {
   author: Discord.User;
@@ -170,8 +170,8 @@ class DiscordMusicPlayer {
     const videoDetails = videoInfo.videoDetails;
 
     const thumbnailURL = await this.getBestThumbnailURL(videoDetails);
-    const averageColor = await getAverageColor(thumbnailURL);
-    const averageColorHex = averageColor.hex;
+    // const averageColor = await getAverageColor(thumbnailURL);
+    // const averageColorHex = averageColor.hex;
 
     this.statusEmbed = new BetterEmbed(this.statusEmbed)
       .setAuthor(this.currentlyPlaying.author)
@@ -182,7 +182,7 @@ class DiscordMusicPlayer {
       )
       .setURL(videoDetails.video_url)
       .setThumbnail(thumbnailURL)
-      .setColor(averageColorHex)
+      // .setColor(averageColorHex)
       .setDescription(
         (this.queue.length ? "**Queue:**\n" : "") +
           (
