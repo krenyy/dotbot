@@ -3,13 +3,17 @@ import client from "../../index.js";
 
 export default class TempChannelHandler {
   public static readonly factoryPrefix = "➕ ";
-  public static readonly tempChannelPrefix = "⚠️ ";
+  public static readonly tempCategoryPrefix = "⚠ ";
 
   static async create(state: Discord.VoiceState) {
-    const tempChannelName = state.channel.name.slice(2);
+    if (!state.channel.name.startsWith(this.factoryPrefix)) {
+      return;
+    }
+
+    const tempChannelName = state.channel.name.slice(this.factoryPrefix.length);
 
     const categoryChannel = await state.guild.channels.create(
-      `${this.tempChannelPrefix} ${tempChannelName}`,
+      `${this.tempCategoryPrefix}${tempChannelName}`,
       {
         type: "category",
       }
@@ -34,7 +38,7 @@ export default class TempChannelHandler {
       return;
     }
 
-    if (!category.name.startsWith(this.tempChannelPrefix)) {
+    if (!category.name.startsWith(this.tempCategoryPrefix)) {
       return;
     }
 
@@ -58,7 +62,7 @@ export default class TempChannelHandler {
       for (const [, category] of guild.channels.cache.filter(
         (channel) =>
           channel.type === "category" &&
-          channel.name.startsWith(this.tempChannelPrefix) &&
+          channel.name.startsWith(this.tempCategoryPrefix) &&
           !(channel as Discord.CategoryChannel).children
             .find((child) => child.type === "voice")
             .members.filter((member) => !member.user.bot).size

@@ -7,19 +7,11 @@ export default class VoiceStateUpdateEventHandler {
     newState: Discord.VoiceState
   ) {
     if (newState.channel && newState.channel !== oldState.channel) {
-      if (newState.channel.name.startsWith(TempChannelHandler.factoryPrefix)) {
-        await TempChannelHandler.create(newState);
-      }
+      await TempChannelHandler.create(newState);
     }
 
     if (oldState.channel) {
-      if (
-        oldState.channel.parent.name.startsWith(
-          TempChannelHandler.tempChannelPrefix
-        )
-      ) {
-        await TempChannelHandler.tryCleanup(oldState);
-      }
+      await TempChannelHandler.tryCleanup(oldState);
     }
   }
 }
