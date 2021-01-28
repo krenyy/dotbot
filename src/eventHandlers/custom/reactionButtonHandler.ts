@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import Discord, { MessageReaction, User } from "discord.js";
 import DiscordMusicPlayerFactory from "../../util/musicPlayer.js";
 
 type ReactionCallback = (
@@ -8,78 +8,82 @@ type ReactionCallback = (
 
 type MessageTypeData = { reactions: Array<string>; callback: ReactionCallback };
 
+async function recyclableHandler(messageReaction: MessageReaction, user: User) {
+  {
+    async function action() {
+      switch (messageReaction.emoji.name) {
+        case "♻": {
+          await messageReaction.message.delete().catch(() => {});
+          break;
+        }
+      }
+    }
+
+    const message = messageReaction.message;
+    const guild = message.guild;
+
+    const embed = message.embeds[0];
+    const embedAuthor = embed.author;
+
+    if (!embedAuthor) {
+      return await action();
+    }
+
+    const embedAuthorTag = embedAuthor.name;
+    const embedAuthorMember = guild.members.cache.find(
+      (member) => member.user.tag === embedAuthorTag
+    );
+
+    if (
+      embedAuthorMember &&
+      user !== embedAuthorMember.user &&
+      user !== user.client.owner
+    )
+      return;
+
+    return await action();
+  }
+}
+
+async function musikHandler(messageReaction: MessageReaction, user: User) {
+  const message = messageReaction.message;
+  const guild = message.guild;
+  const voiceState = guild.me.voice;
+  const voiceChannel = voiceState.channel;
+
+  const isInVoiceChannel = guild.member(user).voice.channel === voiceChannel;
+
+  if (!isInVoiceChannel && user !== user.client.owner) return;
+
+  const player = await DiscordMusicPlayerFactory.get(guild);
+
+  switch (messageReaction.emoji.name) {
+    case "🔁": {
+      await player.loop();
+      break;
+    }
+
+    case "⏹": {
+      await player.leave();
+      break;
+    }
+
+    case "⏭": {
+      await player.next();
+      break;
+    }
+  }
+}
+
 export default class ReactionButtonHandler {
   private static messageTypes = new Map<string, MessageTypeData>()
     .set("recyclable", {
       reactions: ["♻"],
-      callback: async (messageReaction, user) => {
-        async function action() {
-          switch (messageReaction.emoji.name) {
-            case "♻": {
-              await messageReaction.message.delete().catch(() => {});
-              break;
-            }
-          }
-        }
-
-        const message = messageReaction.message;
-        const guild = message.guild;
-
-        const embed = message.embeds[0];
-        const embedAuthor = embed.author;
-
-        if (!embedAuthor) {
-          return await action();
-        }
-
-        const embedAuthorTag = embedAuthor.name;
-
-        const embedAuthorMember = guild.members.cache.find(
-          (member) => member.user.tag === embedAuthorTag
-        );
-
-        if (
-          embedAuthorMember &&
-          user !== embedAuthorMember.user &&
-          user !== user.client.owner
-        )
-          return;
-
-        return await action();
-      },
+      callback: recyclableHandler,
     })
     .set("musik", {
       reactions: ["🔁", "⏹", "⏭"],
-      callback: async (messageReaction, user) => {
-        const message = messageReaction.message;
-        const guild = message.guild;
-        const voiceState = guild.me.voice;
-        const voiceChannel = voiceState.channel;
-
-        const isInVoiceChannel =
-          guild.member(user).voice.channel === voiceChannel;
-
-        if (!isInVoiceChannel && user !== user.client.owner) return;
-
-        const player = await DiscordMusicPlayerFactory.get(guild);
-
-        switch (messageReaction.emoji.name) {
-          case "🔁": {
-            await player.loop();
-            break;
-          }
-
-          case "⏹": {
-            await player.leave();
-            break;
-          }
-
-          case "⏭": {
-            await player.next();
-            break;
-          }
-        }
-      },
+      callback: musikHandler,
     });
 
   static async register(message: Discord.Message) {
