@@ -19,12 +19,13 @@ export default class HelpCommand implements DiscordCommand {
         .setTitle("Help")
         .addFields(
           ...CommandHandler.commands.map((command) => ({
-            name: CommandHandler.prefix + command.id,
-            value:
-              command.description +
+            name:
+              CommandHandler.prefix +
+              command.id +
               (command.type === "USER"
                 ? ""
                 : ` (${this.typeMap.get(command.type)} only)`),
+            value: command.description,
           }))
         )
         .setType("recyclable")
