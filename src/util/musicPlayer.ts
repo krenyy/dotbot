@@ -2,7 +2,7 @@ import Discord from "discord.js";
 import ytdl from "ytdl-core";
 import yts from "yt-search";
 import BetterEmbed from "./betterembed.js";
-// import { getAverageColor } from "fast-average-color-node";
+import { getAverageColor } from "fast-average-color-node";
 
 class DiscordMusicPlayerQueueEntry {
   author: Discord.User;
@@ -169,9 +169,18 @@ class DiscordMusicPlayer {
     const videoInfo = await this.currentlyPlaying.videoInfoPromise;
     const videoDetails = videoInfo.videoDetails;
 
-    const thumbnailURL = await this.getBestThumbnailURL(videoDetails);
-    // const averageColor = await getAverageColor(thumbnailURL);
-    // const averageColorHex = averageColor.hex;
+    // Need to have this stupid logic because youtube started
+    // using RIFF, which is not supported by NodeJS canvas.
+    let averageColorHex: string;
+    const worstThumbnailURL = await this.getWorstThumbnailURL(videoDetails);
+    const split = worstThumbnailURL.split("?");
+    if (split.length >= 2) {
+      const fixedURL = split.slice(0, split.length - 1).join("");
+      const averageColor = await getAverageColor(fixedURL);
+      averageColorHex = averageColor.hex;
+    } else {
+      averageColorHex = "#FF0000";
+    }
 
     this.statusEmbed = new BetterEmbed(this.statusEmbed)
       .setAuthor(this.currentlyPlaying.author)
@@ -181,8 +190,8 @@ class DiscordMusicPlayer {
         }`
       )
       .setURL(videoDetails.video_url)
-      .setThumbnail(thumbnailURL)
-      // .setColor(averageColorHex)
+      .setThumbnail(await this.getBestThumbnailURL(videoDetails))
+      .setColor(averageColorHex)
       .setDescription(
         (this.queue.length ? "**Queue:**\n" : "") +
           (
@@ -200,6 +209,11 @@ class DiscordMusicPlayer {
   async getBestThumbnailURL(videoDetails: ytdl.MoreVideoDetails) {
     const thumbnails = videoDetails.thumbnails;
     return thumbnails[thumbnails.length - 1].url;
+  }
+
+  async getWorstThumbnailURL(videoDetails: ytdl.MoreVideoDetails) {
+    const thumbnails = videoDetails.thumbnails;
+    return thumbnails[0].url;
   }
 }
 
