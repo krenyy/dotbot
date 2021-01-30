@@ -7,6 +7,7 @@ export default class TeamsCommand implements DiscordCommand {
   public static readonly type = "USER";
   public static readonly description =
     "Divides current voice channel members to teams.";
+  public static readonly helpText = "<number of teams>";
 
   static async shuffle(
     players: Array<string>,

@@ -19,6 +19,7 @@ export default class EvalCommand implements DiscordCommand {
   public static readonly id = "eval";
   public static readonly type = "OWNER";
   public static readonly description = "Evaluates a Javascript expression.";
+  public static readonly helpText = "<expression>";
 
   static async execute(message: Discord.Message, args: Array<string>) {
     if (message.author !== message.client.owner) {

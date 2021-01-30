@@ -7,6 +7,7 @@ export default class PurgeCommand implements DiscordCommand {
   public static readonly type = "ADMIN";
   public static readonly description =
     "Purges 100 text messages from current channel.";
+  public static readonly helpText = "";
 
   static async execute(message: Discord.Message, args: Array<string>) {
     const messagesToDelete = (

@@ -7,6 +7,7 @@ export default class PlayCommand implements DiscordCommand {
   public static readonly id = "play";
   public static readonly type = "USER";
   public static readonly description = "Plays a video from Youtube.";
+  public static readonly helpText = "<url or search query>";
 
   static async execute(message: Discord.Message, args: Array<string>) {
     const botIsInVoiceChannel = !!message.guild.me.voice.channel;
