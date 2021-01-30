@@ -125,12 +125,22 @@ class DiscordMusicPlayer {
     if (ytdl.validateURL(queryOrUrl)) return queryOrUrl;
 
     const videos = (await yts.search(queryOrUrl)).videos;
-    if (!videos.length) throw new Error("No videos found!");
+    if (!videos.length) return null;
     return videos[0].url;
   }
 
   async addToQueue(message: Discord.Message, queryOrUrl: string) {
     const url = await this.queryToUrl(queryOrUrl);
+
+    if (!url) {
+      await message.channel.send(
+        new BetterEmbed()
+          .setAuthor(message.author)
+          .setError("No videos found!")
+          .setType("recyclable")
+      );
+      return;
+    }
 
     const entry = new DiscordMusicPlayerQueueEntry(
       message.author,
