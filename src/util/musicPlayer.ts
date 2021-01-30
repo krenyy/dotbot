@@ -223,6 +223,19 @@ class DiscordMusicPlayer {
       averageColorHex = "#FF0000";
     }
 
+    const description =
+      (this.queue.length ? "**Queue:**\n" : "") +
+      (
+        await Promise.all(
+          this.queue.map(
+            async (entry, index) =>
+              `**${index + 1}.** ${
+                (await entry.videoInfoPromise).videoDetails.title
+              }`
+          )
+        )
+      ).join("\n");
+
     this.statusEmbed = new BetterEmbed(this.statusEmbed)
       .setAuthor(this.currentlyPlaying.author)
       .setTitle(
@@ -234,17 +247,9 @@ class DiscordMusicPlayer {
       .setThumbnail(await this.getBestThumbnailURL(videoDetails))
       .setColor(averageColorHex)
       .setDescription(
-        (this.queue.length ? "**Queue:**\n" : "") +
-          (
-            await Promise.all(
-              this.queue.map(
-                async (entry, index) =>
-                  `**${index + 1}.** ${
-                    (await entry.videoInfoPromise).videoDetails.title
-                  }`
-              )
-            )
-          ).join("\n")
+        description.length <= 2048
+          ? description
+          : description.slice(0, 2045) + "..."
       )
       .setType("music");
   }
