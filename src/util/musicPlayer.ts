@@ -215,7 +215,7 @@ class DiscordMusicPlayer {
             )
           ).join("\n")
       )
-      .setType("musik");
+      .setType("music");
   }
 
   async getBestThumbnailURL(videoDetails: ytdl.MoreVideoDetails) {

@@ -46,7 +46,10 @@ async function recyclableHandler(messageReaction: MessageReaction, user: User) {
   }
 }
 
-async function musikHandler(messageReaction: MessageReaction, user: User) {
+async function musicPlayerHandler(
+  messageReaction: MessageReaction,
+  user: User
+) {
   const message = messageReaction.message;
   const guild = message.guild;
   const voiceState = guild.me.voice;
@@ -77,14 +80,14 @@ async function musikHandler(messageReaction: MessageReaction, user: User) {
 }
 
 export default class ReactionButtonHandler {
-  private static messageTypes = new Map<string, MessageTypeData>()
+  private static messageTypes = new Map<BetterEmbedType, MessageTypeData>()
     .set("recyclable", {
       reactions: ["♻"],
       callback: recyclableHandler,
     })
-    .set("musik", {
+    .set("music", {
       reactions: ["🔁", "⏹", "⏭"],
-      callback: musikHandler,
+      callback: musicPlayerHandler,
     });
 
   static async register(message: Discord.Message) {
@@ -96,7 +99,7 @@ export default class ReactionButtonHandler {
 
     const footer = embed.footer;
     if (!footer) return;
-    const embedType = embed.footer.text;
+    const embedType = embed.footer.text as BetterEmbedType;
 
     if (!this.messageTypes.has(embedType)) return;
 
@@ -122,7 +125,7 @@ export default class ReactionButtonHandler {
     if (reactionUsers.every((user) => user !== user.client.user)) return;
 
     const embed = messageReaction.message.embeds[0];
-    const embedType = embed.footer.text;
+    const embedType = embed.footer.text as BetterEmbedType;
 
     const type = this.messageTypes.get(embedType);
 
