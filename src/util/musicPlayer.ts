@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import ytdl from "ytdl-core";
 import yts from "yt-search";
-import BetterEmbed from "./betterembed.js";
+import BetterEmbed from "./betterEmbed.js";
 import { getAverageColor } from "fast-average-color-node";
 
 class DiscordMusicPlayerQueueEntry {

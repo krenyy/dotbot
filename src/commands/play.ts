@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import BetterEmbed from "../util/betterembed.js";
+import BetterEmbed from "../util/betterEmbed.js";
 import DiscordCommand from "./base.js";
 import DiscordMusicPlayerFactory from "../util/musicPlayer.js";
 

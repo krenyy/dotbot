@@ -3,7 +3,7 @@ import CommandHandler from "./custom/commandHandler.js";
 import TempChannelHandler from "./custom/tempChannelHandler.js";
 import HelpCommand from "../commands/help.js";
 import Discord from "discord.js";
-import BetterEmbed from "../util/betterembed.js";
+import BetterEmbed from "../util/betterEmbed.js";
 
 declare module "discord.js" {
   interface Client {

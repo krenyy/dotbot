@@ -1,5 +1,6 @@
 import Discord, { MessageReaction, User } from "discord.js";
 import DiscordMusicPlayerFactory from "../../util/musicPlayer.js";
+import { BetterEmbedType } from "../../util/betterEmbed";
 
 type ReactionCallback = (
   messageReaction: Discord.MessageReaction,

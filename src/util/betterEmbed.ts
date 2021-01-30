@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-type BetterEmbedType = "recyclable" | "musik";
+export type BetterEmbedType = "recyclable" | "music";
 
 export default class BetterEmbed extends Discord.MessageEmbed {
   setAuthor(author: Discord.User) {

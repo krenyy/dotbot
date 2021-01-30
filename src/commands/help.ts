@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import DiscordCommand from "./base.js";
-import BetterEmbed from "../util/betterembed.js";
+import BetterEmbed from "../util/betterEmbed.js";
 import CommandHandler from "../eventHandlers/custom/commandHandler.js";
 
 export default class HelpCommand implements DiscordCommand {

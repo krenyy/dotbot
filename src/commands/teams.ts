@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import DiscordCommand from "./base.js";
-import BetterEmbed from "../util/betterembed.js";
+import BetterEmbed from "../util/betterEmbed.js";
 
 export default class TeamsCommand implements DiscordCommand {
   public static readonly id = "teams";
