@@ -1,6 +1,7 @@
 import DiscordCommand from "../../commands/base.js";
 import HelpCommand from "../../commands/help.js";
 import PlayCommand from "../../commands/play.js";
+import UnqueueCommand from "../../commands/unqueue.js";
 import PurgeCommand from "../../commands/purge.js";
 import TeamsCommand from "../../commands/teams.js";
 import EvalCommand from "../../commands/eval.js";
@@ -11,6 +12,7 @@ export default class CommandHandler {
   public static commands: Array<typeof DiscordCommand> = [
     HelpCommand,
     PlayCommand,
+    UnqueueCommand,
     PurgeCommand,
     TeamsCommand,
     EvalCommand,
