@@ -207,8 +207,10 @@ class DiscordMusicPlayer {
           (
             await Promise.all(
               this.queue.map(
-                async (entry) =>
-                  (await entry.videoInfoPromise).videoDetails.title
+                async (entry, index) =>
+                  `**${index + 1}.** ${
+                    (await entry.videoInfoPromise).videoDetails.title
+                  }`
               )
             )
           ).join("\n")
