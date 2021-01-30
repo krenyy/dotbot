@@ -175,7 +175,7 @@ class DiscordMusicPlayer {
     await this.statusMessage.edit(this.statusEmbed);
   }
 
-  async updateStatusEmbed() {
+  private async updateStatusEmbed() {
     const videoInfo = await this.currentlyPlaying.videoInfoPromise;
     const videoDetails = videoInfo.videoDetails;
 
