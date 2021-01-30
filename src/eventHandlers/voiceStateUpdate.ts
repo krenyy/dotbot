@@ -6,8 +6,13 @@ export default class VoiceStateUpdateEventHandler {
     oldState: Discord.VoiceState,
     newState: Discord.VoiceState
   ) {
-    if (newState.channel && newState.channel !== oldState.channel) {
-      await TempChannelHandler.create(newState);
+    if (newState.channel) {
+      if (newState.member === newState.member.guild.me && !newState.deaf) {
+        await newState.setDeaf(true, "Save bandwidth!");
+      }
+      if (newState.channel !== oldState.channel) {
+        await TempChannelHandler.create(newState);
+      }
     }
 
     if (oldState.channel) {
