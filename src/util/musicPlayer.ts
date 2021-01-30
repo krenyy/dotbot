@@ -158,6 +158,37 @@ class DiscordMusicPlayer {
     }
   }
 
+  async removeFromQueue(message: Discord.Message, index: number) {
+    if (index > this.queue.length || index < 0) {
+      await message.channel.send(
+        new BetterEmbed()
+          .setAuthor(message.author)
+          .setError("Invalid queue index!")
+          .setType("recyclable")
+      );
+      return;
+    }
+
+    const queueEntry = this.queue[index];
+
+    if (
+      message.author !== queueEntry.author &&
+      !message.member.hasPermission("ADMINISTRATOR")
+    ) {
+      await message.channel.send(
+        new BetterEmbed()
+          .setAuthor(message.author)
+          .setError("You cannot remove this queue entry!")
+          .setType("recyclable")
+      );
+      return;
+    }
+
+    this.queue.splice(index, 1);
+
+    await this.updateStatusMessage();
+  }
+
   async updateStatusMessage() {
     await this.updateStatusEmbed();
 
