@@ -159,7 +159,7 @@ class DiscordMusicPlayer {
   }
 
   async removeFromQueue(message: Discord.Message, index: number) {
-    if (index > this.queue.length || index < 0) {
+    if (index >= this.queue.length || index < 0) {
       await message.channel.send(
         new BetterEmbed()
           .setAuthor(message.author)
