@@ -12,8 +12,7 @@ function onInterrupt(signal: NodeJS.Signals) {
 
 process
   .on("unhandledRejection", (reason, promise) => {
-    console.error(`[UNHANDLED REJECTION] ${reason}`);
-    console.log(promise);
+    console.error(promise)
   })
   .on("SIGINT", onInterrupt)
   .on("SIGTERM", onInterrupt)

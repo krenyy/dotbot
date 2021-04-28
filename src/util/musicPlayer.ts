@@ -32,7 +32,7 @@ class DiscordMusicPlayer {
     this.currentlyPlaying = undefined;
     this.queue = new Array<DiscordMusicPlayerQueueEntry>();
 
-    this.statusEmbed = new BetterEmbed();
+    this.statusEmbed = new BetterEmbed().setDescription("Preparing music for your ears...");
     this.statusMessage = undefined;
 
     this.isPaused = false;
