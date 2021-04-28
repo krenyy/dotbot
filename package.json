@@ -5,9 +5,6 @@
   "main": "./build/index.js",
   "author": "Martin Kröner <kronerm9@gmail.com>",
   "license": "MIT",
-  "engines": {
-    "node": "16.0.0"
-  },
   "scripts": {
     "dev": "tsc && node --inspect --trace-warnings --trace-uncaught ./build/index.js",
     "build": "tsc",
