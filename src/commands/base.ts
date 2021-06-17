@@ -1,10 +1,7 @@
-import Discord from "discord.js";
+import Discord from 'discord.js';
 
-export default class DiscordCommand {
-  public static readonly id: string;
-  public static readonly type: "USER" | "ADMIN" | "OWNER";
-  public static readonly description: string;
-  public static readonly helpText: string;
+export default class SlashCommand {
+  public static readonly data: Discord.ApplicationCommandData;
 
-  static async execute(message: Discord.Message, args: Array<string>) {}
+  static async execute(interaction: Discord.CommandInteraction) {}
 }

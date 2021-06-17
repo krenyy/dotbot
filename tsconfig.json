@@ -6,10 +6,7 @@
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "outDir": "build",
+    "outDir": "build"
   },
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "exclude": ["node_modules", "build"]
 }

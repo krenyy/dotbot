@@ -1,8 +1,7 @@
-import Discord from "discord.js";
-import BetterEmbed from "../util/betterEmbed.js";
-import DiscordCommand from "./base.js";
-import js_beautify from "js-beautify";
-import axios from "axios";
+import Discord from 'discord.js';
+import SlashCommand from './base.js';
+import js_beautify from 'js-beautify';
+import axios from 'axios';
 
 const _Discord = Discord;
 const _axios = axios;
@@ -15,57 +14,80 @@ async function sleep(ms: number) {
   });
 }
 
-export default class EvalCommand implements DiscordCommand {
-  public static readonly id = "eval";
-  public static readonly type = "OWNER";
-  public static readonly description = "Evaluates a Javascript expression.";
-  public static readonly helpText = "<expression>";
+export default class EvalCommand implements SlashCommand {
+  public static readonly data: Discord.ApplicationCommandData = {
+    name: 'eval',
+    description: 'Evaluates a Javascript expression',
+    options: [
+      {
+        name: 'expression',
+        description: 'Expression to evaluate',
+        type: 'STRING',
+        required: true,
+      },
+    ],
+  };
 
-  static async execute(message: Discord.Message, args: Array<string>) {
-    if (message.author !== message.client.owner) {
-      await message.channel.send(
-        new BetterEmbed()
-          .setAuthor(message.author)
-          .setError("Only the owner can use this command!")
-          .setType("recyclable")
-      );
+  static async execute(interaction: Discord.CommandInteraction) {
+    if (interaction.user !== interaction.client.application.owner) {
+      await interaction.reply({
+        content: 'Only the owner can use this command!',
+        ephemeral: true,
+      });
       return;
     }
 
-    const evalQuery = args.join(" ");
+    const expression = interaction.options.get('expression').value as string;
 
-    if (evalQuery.includes("setTimeout") || evalQuery.includes("setInterval")) {
-      await message.channel.send(
-        new BetterEmbed()
-          .setAuthor(message.author)
-          .setError(
-            "Cannot use `setTimeout` or `setInterval` inside an eval!\n" +
-              "Use special `await sleep(ms)` instead!"
-          )
-          .setType("recyclable")
-      );
+    if (
+      expression.includes('setTimeout') ||
+      expression.includes('setInterval')
+    ) {
+      await interaction.reply({
+        content:
+          'Cannot use `setTimeout` or `setInterval` inside an eval!\n' +
+          'Use special `await sleep(ms)` instead!',
+        ephemeral: true,
+      });
       return;
     }
 
-    const codeBlock = `\`\`\`js\n${js_beautify(evalQuery)}\`\`\`\n`;
+    const codeBlock = `\`\`\`js\n${js_beautify(expression)}\`\`\`\n`;
 
-    const evalEmbed = new BetterEmbed()
-      .setAuthor(message.author)
-      .setInfo(codeBlock)
-      .setTitle("Running...");
-    const evalMsg = await message.channel.send(evalEmbed);
+    await interaction.reply({
+      embeds: [
+        new Discord.MessageEmbed({
+          title: 'Running...',
+          color: '#0090ff',
+          description: codeBlock,
+        }),
+      ],
+      ephemeral: true,
+    });
 
     await sleep(500);
 
     try {
-      const evalResult = await eval(`(async()=>{${evalQuery}})()`);
-      await evalMsg.edit(
-        evalEmbed.setSuccess(codeBlock + evalResult).setType("recyclable")
-      );
-    } catch (e) {
-      await evalMsg.edit(
-        evalEmbed.setError(codeBlock + e).setType("recyclable")
-      );
+      const evalResult = await eval(`(async()=>{${expression}})()`);
+      await interaction.editReply({
+        embeds: [
+          new Discord.MessageEmbed({
+            title: 'Finished!',
+            color: '#00ff00',
+            description: codeBlock + evalResult,
+          }),
+        ],
+      });
+    } catch (err) {
+      await interaction.editReply({
+        embeds: [
+          new Discord.MessageEmbed({
+            title: 'Failed!',
+            color: '#ff0000',
+            description: codeBlock + err,
+          }),
+        ],
+      });
     }
   }
 }
