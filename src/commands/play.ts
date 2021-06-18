@@ -20,6 +20,8 @@ export default class PlayCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
+    await interaction.defer({ ephemeral: true });
+
     const member = interaction.member as Discord.GuildMember;
 
     const botIsInVoiceChannel = !!interaction.guild.me.voice.channel;
@@ -27,17 +29,15 @@ export default class PlayCommand implements SlashCommand {
       member.voice.channel === interaction.guild.me.voice.channel;
 
     if (botIsInVoiceChannel && !userInBotVoiceChannel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "You're not connected to the same voice channel as bot!",
-        ephemeral: true,
       });
       return;
     }
 
     if (!member.voice.channel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "You're not connected to a voice channel!",
-        ephemeral: true,
       });
       return;
     }
@@ -45,8 +45,6 @@ export default class PlayCommand implements SlashCommand {
     // -----
 
     const player = await DiscordMusicPlayerFactory.get(interaction.guild);
-
-    await interaction.defer({ ephemeral: true });
 
     const query = interaction.options.get('query').value as string;
 

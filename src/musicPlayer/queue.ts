@@ -1,4 +1,6 @@
 import client from '../index.js';
+import consoleTablePrinter from 'console-table-printer';
+import stripAnsi from 'strip-ansi';
 
 export interface DiscordMusicPlayerTrack {
   requestedBy: `${bigint}`;
@@ -91,15 +93,17 @@ export class DiscordMusicPlayerQueue {
   }
 
   getFormatted() {
-    return this.items
-      .map(
-        (item, index) =>
-          `${index === this.pos ? '> ' : '  '}${index + 1}.\t${
-            item.trackData.title
-          }\t\t(requested by ${
-            client.users.resolve(item.requestedBy).username
-          })`
-      )
-      .join('\n');
+    const table = new consoleTablePrinter.Table();
+    this.items.forEach((item, index) => {
+      table.addRow({
+        '': index === this.pos ? '▶️' : '',
+        index: index + 1,
+        title: item.trackData.title,
+        'requested by': client.users.resolve(item.requestedBy).username,
+      });
+    });
+
+    // Remove colors which don't render properly in discord
+    return stripAnsi(table.render());
   }
 }

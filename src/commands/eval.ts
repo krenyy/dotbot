@@ -29,10 +29,11 @@ export default class EvalCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
+    await interaction.defer({ ephemeral: true });
+
     if (interaction.user !== interaction.client.application.owner) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'Only the owner can use this command!',
-        ephemeral: true,
       });
       return;
     }
@@ -43,18 +44,17 @@ export default class EvalCommand implements SlashCommand {
       expression.includes('setTimeout') ||
       expression.includes('setInterval')
     ) {
-      await interaction.reply({
+      await interaction.editReply({
         content:
           'Cannot use `setTimeout` or `setInterval` inside an eval!\n' +
           'Use special `await sleep(ms)` instead!',
-        ephemeral: true,
       });
       return;
     }
 
     const codeBlock = `\`\`\`js\n${js_beautify(expression)}\`\`\`\n`;
 
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [
         new Discord.MessageEmbed({
           title: 'Running...',
@@ -62,7 +62,6 @@ export default class EvalCommand implements SlashCommand {
           description: codeBlock,
         }),
       ],
-      ephemeral: true,
     });
 
     await sleep(500);

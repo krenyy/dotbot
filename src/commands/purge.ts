@@ -8,6 +8,8 @@ export default class PurgeCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
+    await interaction.defer({ ephemeral: true });
+
     const messagesToDelete = (
       await interaction.channel.messages.fetch({
         limit: 100,
@@ -19,9 +21,8 @@ export default class PurgeCommand implements SlashCommand {
       .filter((m) => m.author !== m.client.user);
 
     if (!messagesToDelete.size) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'No messages to remove!',
-        ephemeral: true,
       });
       return;
     }
@@ -30,9 +31,8 @@ export default class PurgeCommand implements SlashCommand {
       interaction.channel as Discord.TextChannel
     ).bulkDelete(messagesToDelete, true);
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Purged ${deletedMessages.size} messages!`,
-      ephemeral: true,
     });
   }
 }

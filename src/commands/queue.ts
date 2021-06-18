@@ -10,12 +10,13 @@ export default class QueueCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
+    await interaction.defer({ ephemeral: true });
+
     const botIsInVoiceChannel = !!interaction.guild.me.voice.channel;
 
     if (!botIsInVoiceChannel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "Bot isn't playing at the moment!",
-        ephemeral: true,
       });
       return;
     }
@@ -23,8 +24,6 @@ export default class QueueCommand implements SlashCommand {
     // -----
 
     const player = await DiscordMusicPlayerFactory.get(interaction.guild);
-
-    await interaction.defer({ ephemeral: true });
 
     const formattedQueue = player.queue.getFormatted();
 

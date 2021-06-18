@@ -17,6 +17,8 @@ export default class UnqueueCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
+    await interaction.defer({ ephemeral: true });
+
     const member = interaction.member as Discord.GuildMember;
 
     const botIsInVoiceChannel = !!interaction.guild.me.voice.channel;
@@ -24,25 +26,22 @@ export default class UnqueueCommand implements SlashCommand {
       member.voice.channel === interaction.guild.me.voice.channel;
 
     if (!botIsInVoiceChannel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'Bot is currently not playing!',
-        ephemeral: true,
       });
       return;
     }
 
     if (botIsInVoiceChannel && !userInBotVoiceChannel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "You're not connected to the same voice channel as bot!",
-        ephemeral: true,
       });
       return;
     }
 
     if (!member.voice.channel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "You're not connected to a voice channel!",
-        ephemeral: true,
       });
       return;
     }
@@ -55,14 +54,13 @@ export default class UnqueueCommand implements SlashCommand {
     const index = fakeIndex - 1;
 
     if (index >= player.queue.length() || index < 0) {
-      interaction.reply({ content: 'Invalid queue index!', ephemeral: true });
+      interaction.editReply({ content: 'Invalid queue index!' });
       return;
     }
 
     if (index === player.queue.position()) {
-      interaction.reply({
+      interaction.editReply({
         content: 'Cannot remove current entry!',
-        ephemeral: true,
       });
       return;
     }
@@ -75,9 +73,8 @@ export default class UnqueueCommand implements SlashCommand {
         'ADMINISTRATOR'
       )
     ) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'You cannot remove this queue entry!',
-        ephemeral: true,
       });
       return;
     }
@@ -85,9 +82,9 @@ export default class UnqueueCommand implements SlashCommand {
     const title = entry.trackData.title;
 
     player.queue.remove(index);
-    await interaction.reply({
+
+    await interaction.editReply({
       content: `'${title}' removed from queue!`,
-      ephemeral: true,
     });
 
     await player.updateStatusMessage();
