@@ -78,7 +78,7 @@ export default class InteractionMessageComponentHandler {
           .channel as Discord.VoiceChannel;
 
         if (!voiceChannel) {
-          interaction.editReply({
+          await interaction.editReply({
             content: "You're not connected to a voice channel!",
           });
           return;
