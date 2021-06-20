@@ -83,6 +83,13 @@ export default class InteractionMessageComponentHandler {
           await interaction.editReply({
             content: "You're not connected to a voice channel!",
           });
+          await message.edit({
+            components: message.components.map((row) =>
+              row.components.map((button) =>
+                new Discord.MessageButton(button).setDisabled(false)
+              )
+            ),
+          });
           return;
         }
 
