@@ -74,8 +74,10 @@ export default class InteractionMessageComponentHandler {
       .set('music_player_revive', async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
-        const voiceChannel = (interaction.member as Discord.GuildMember).voice
-          .channel as Discord.VoiceChannel;
+        const channel = interaction.channel as Discord.TextChannel;
+        const message = interaction.message as Discord.Message;
+        const member = interaction.member as Discord.GuildMember;
+        const voiceChannel = member.voice.channel as Discord.VoiceChannel;
 
         if (!voiceChannel) {
           await interaction.editReply({
@@ -87,21 +89,19 @@ export default class InteractionMessageComponentHandler {
         const config = (
           await axios.get(
             (
-              interaction.message.attachments.values().next()
+              message.attachments.values().next()
                 .value as Discord.MessageAttachment
             ).url
           )
         ).data;
 
-        await (interaction.message as Discord.Message).delete();
+        await message.delete();
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
         );
 
-        musicPlayer.message = await (
-          interaction.channel as Discord.TextChannel
-        ).send({
+        musicPlayer.message = await channel.send({
           embeds: [
             new Discord.MessageEmbed()
               .setDescription('Preparing music for your ears...')
