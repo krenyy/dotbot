@@ -171,7 +171,13 @@ export default class DiscordMusicPlayer {
 
     await DiscordMusicPlayerFactory.remove(this.guild);
     this.subscription.unsubscribe();
-    this.subscription.connection.destroy();
+
+    // Don't try to destroy a non-existing connection
+    if (
+      this.subscription.connection.state.status !==
+      DiscordVoice.VoiceConnectionStatus.Disconnected
+    )
+      this.subscription.connection.destroy();
   }
 
   async updateStatusMessage() {
