@@ -10,7 +10,8 @@ export default class QueueCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
-    await interaction.defer({ ephemeral: true });
+    // For now, ephemeral messages don't support attachments
+    await interaction.defer({ ephemeral: false });
 
     const botIsInVoiceChannel = !!interaction.guild.me.voice.channel;
 
@@ -28,14 +29,21 @@ export default class QueueCommand implements SlashCommand {
     const formattedQueue = player.queue.getFormatted();
 
     interaction.editReply({
-      content: 'Queue:\n```' + formattedQueue + '```',
-      // WAIT FOR ATTACHMENT SUPPORT IN EPHEMERAL MESSAGES
-      // files: [
-      //   new Discord.MessageAttachment(
-      //     Readable.from(formattedQueue),
-      //     'queue.txt'
-      //   ),
-      // ],
+      files: [
+        new Discord.MessageAttachment(
+          Readable.from(formattedQueue),
+          'queue.txt'
+        ),
+      ],
+      components: [
+        [
+          new Discord.MessageButton({
+            customID: 'delete',
+            label: 'Delete',
+            style: 'DANGER',
+          }),
+        ],
+      ],
     });
   }
 }
