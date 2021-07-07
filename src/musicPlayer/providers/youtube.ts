@@ -59,8 +59,8 @@ export default class YoutubeTrackProvider {
   }
 
   static async get(query: string) {
-    if (!ytdl.validateURL(query)) return this.getFromSearch(query);
     if (ytpl.validateID(query)) return this.getFromPlaylistURL(query);
+    if (!ytdl.validateURL(query)) return this.getFromSearch(query);
     return this.getFromURL(query);
   }
 }
