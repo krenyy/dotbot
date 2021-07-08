@@ -65,7 +65,7 @@ export default class UnqueueCommand implements SlashCommand {
       return;
     }
 
-    const entry = player.queue.at(index);
+    const entry = player.queue.at(index, true);
 
     if (
       interaction.user.id !== entry.requestedBy &&

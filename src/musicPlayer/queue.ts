@@ -70,10 +70,8 @@ export class DiscordMusicPlayerQueue {
         ? this.pos + 1 - this.items.length
         : this.pos + 1;
 
-    const entry = this.items[newPosition];
-
     if (!keepCursorPosition) this.pos = newPosition;
-    return entry;
+    return this.items[newPosition];
   }
 
   previous(keepCursorPosition?: boolean) {
@@ -82,13 +80,12 @@ export class DiscordMusicPlayerQueue {
         ? this.pos - 1 + this.items.length
         : this.pos - 1;
 
-    const entry = this.items[newPosition];
-
     if (!keepCursorPosition) this.pos = newPosition;
-    return entry;
+    return this.items[newPosition];
   }
 
-  at(index: number) {
+  at(index: number, keepCursorPosition?: boolean) {
+    if (!keepCursorPosition) this.pos = index;
     return this.items[index];
   }
 
