@@ -1,7 +1,7 @@
 import client from '../index.js';
 import TempChannelHandler from './custom/tempChannelHandler.js';
 
-export default class ReadyEventHandler {
+export default class ReadyHandler {
   static async execute() {
     await client.application.fetch();
 

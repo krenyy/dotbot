@@ -82,16 +82,15 @@ export default class PlayCommand implements SlashCommand {
       embeds: [
         new Discord.MessageEmbed()
           .setDescription('Preparing music for your ears...')
-          .setColor('black'),
+          .setColor('#000000'),
       ],
     });
 
     await interaction.editReply({ content: 'Added to queue!' });
 
-    await player.join(
-      (interaction.member as Discord.GuildMember).voice
-        .channel as Discord.VoiceChannel
-    );
+    const voice = member.voice;
+    const voiceChannel = voice.channel as Discord.VoiceChannel;
+    await player.join(voiceChannel);
     await player.play(player.queue.at(0));
   }
 }

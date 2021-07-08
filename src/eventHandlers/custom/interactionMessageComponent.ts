@@ -86,7 +86,9 @@ export default class InteractionMessageComponentHandler {
           await message.edit({
             components: message.components.map((row) =>
               row.components.map((button) =>
-                new Discord.MessageButton(button).setDisabled(false)
+                new Discord.MessageButton(
+                  button as Discord.MessageButton
+                ).setDisabled(false)
               )
             ),
           });
@@ -112,7 +114,7 @@ export default class InteractionMessageComponentHandler {
           embeds: [
             new Discord.MessageEmbed()
               .setDescription('Preparing music for your ears...')
-              .setColor('black'),
+              .setColor('#000000'),
           ],
         });
 
@@ -124,14 +126,16 @@ export default class InteractionMessageComponentHandler {
       });
 
   static async execute(interaction: Discord.MessageComponentInteraction) {
-    if (interaction.customID.startsWith('music_player')) {
+    if (interaction.customId.startsWith('music_player')) {
       const msg = interaction.message as Discord.Message;
 
       const components = msg.components.map(
         (row) =>
           new Discord.MessageActionRow({
             components: row.components.map((button) =>
-              new Discord.MessageButton(button).setDisabled(true)
+              new Discord.MessageButton(
+                button as Discord.MessageButton
+              ).setDisabled(true)
             ),
           })
       );
@@ -142,7 +146,7 @@ export default class InteractionMessageComponentHandler {
       });
     }
 
-    const action = this.interaction_handlers.get(interaction.customID);
+    const action = this.interaction_handlers.get(interaction.customId);
 
     await action(interaction);
   }

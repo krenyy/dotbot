@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
 import InteractionCommandHandler from './custom/interactionCommand.js';
 
-export default class MessageEventHandler {
+export default class MessageCreateHandler {
   static async execute(message: Discord.Message) {
     if (message.partial) await message.fetch();
 

@@ -15,7 +15,11 @@ export default class InteractionCommandHandler {
     EvalCommand,
   ];
 
-  static async register(commandManager: Discord.ApplicationCommandManager) {
+  static async register(
+    commandManager:
+      | Discord.ApplicationCommandManager
+      | Discord.GuildApplicationCommandManager
+  ) {
     commandManager.set(this.commands.map((cmd) => cmd.data));
   }
 

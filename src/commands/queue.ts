@@ -38,7 +38,7 @@ export default class QueueCommand implements SlashCommand {
       components: [
         [
           new Discord.MessageButton({
-            customID: 'delete',
+            customId: 'delete',
             label: 'Delete',
             style: 'DANGER',
           }),

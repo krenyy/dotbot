@@ -105,7 +105,8 @@ export default class DiscordMusicPlayer {
     const connection = DiscordVoice.joinVoiceChannel({
       channelId: voiceChannel.id,
       guildId: voiceChannel.guild.id,
-      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+      adapterCreator: voiceChannel.guild
+        .voiceAdapterCreator as unknown as DiscordVoice.DiscordGatewayAdapterCreator,
     });
     const audioPlayer = DiscordVoice.createAudioPlayer();
 
@@ -156,12 +157,12 @@ export default class DiscordMusicPlayer {
       components: [
         [
           new Discord.MessageButton({
-            customID: 'music_player_revive',
+            customId: 'music_player_revive',
             label: 'Play',
             style: 'PRIMARY',
           }),
           new Discord.MessageButton({
-            customID: 'delete',
+            customId: 'delete',
             label: 'Delete',
             style: 'DANGER',
           }),
@@ -192,7 +193,7 @@ export default class DiscordMusicPlayer {
       .addField('Looping', this.looping ? 'Yes' : 'No', true)
       .setURL(current.trackData.url)
       .setThumbnail(current.trackData.thumbnailURL)
-      .setColor(current.trackData.averageColor);
+      .setColor(current.trackData.averageColor as Discord.ColorResolvable);
 
     if (this.queue.length() > 1) {
       let description = '';
@@ -229,34 +230,34 @@ export default class DiscordMusicPlayer {
     const buttons = [
       new Discord.MessageButton({
         style: 'SECONDARY',
-        customID: 'music_player_loop',
+        customId: 'music_player_loop',
         label: 'Loop',
       }),
       new Discord.MessageButton({
         style: 'SECONDARY',
-        customID: 'music_player_pause',
+        customId: 'music_player_pause',
         label: 'Pause',
       }),
       new Discord.MessageButton({
         style: 'DANGER',
-        customID: 'music_player_stop',
+        customId: 'music_player_stop',
         label: 'Stop',
       }),
       new Discord.MessageButton({
         style: 'PRIMARY',
-        customID: 'music_player_previous',
+        customId: 'music_player_previous',
         label: 'Previous',
       }),
       new Discord.MessageButton({
         style: 'PRIMARY',
-        customID: 'music_player_next',
+        customId: 'music_player_next',
         label: 'Next',
       }),
     ];
 
     // Pause / resume button
     buttons[1]
-      .setCustomID(`music_player_${this.paused ? 'resume' : 'pause'}`)
+      .setCustomId(`music_player_${this.paused ? 'resume' : 'pause'}`)
       .setLabel(this.paused ? 'Resume' : 'Pause');
 
     if (!this.looping) {
