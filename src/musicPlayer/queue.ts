@@ -3,7 +3,7 @@ import consoleTablePrinter from "console-table-printer";
 import stripAnsi from "strip-ansi";
 
 export interface DiscordMusicPlayerTrack {
-  requestedBy: `${bigint}`;
+  requestedBy: string;
   trackData: DiscordMusicPlayerTrackData;
 }
 
@@ -11,7 +11,6 @@ export interface DiscordMusicPlayerTrackData {
   title: string;
   url: string;
   thumbnailURL: string;
-  averageColor: string;
 }
 
 export class DiscordMusicPlayerQueue {

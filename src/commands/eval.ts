@@ -29,7 +29,7 @@ export default class EvalCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
-    await interaction.defer({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     if (interaction.user !== interaction.client.application.owner) {
       await interaction.editReply({

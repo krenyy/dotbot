@@ -17,7 +17,7 @@ export default class GotoCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
-    await interaction.defer({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     const member = interaction.member as Discord.GuildMember;
 

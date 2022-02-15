@@ -10,8 +10,7 @@ export default class QueueCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
-    // For now, ephemeral messages don't support attachments
-    await interaction.defer({ ephemeral: false });
+    await interaction.deferReply({ ephemeral: true });
 
     const botIsInVoiceChannel = !!interaction.guild.me.voice.channel;
 
@@ -22,10 +21,7 @@ export default class QueueCommand implements SlashCommand {
       return;
     }
 
-    // -----
-
     const player = await DiscordMusicPlayerFactory.get(interaction.guild);
-
     const formattedQueue = player.queue.getFormatted();
 
     interaction.editReply({
@@ -34,15 +30,6 @@ export default class QueueCommand implements SlashCommand {
           Readable.from(formattedQueue),
           "queue.txt"
         ),
-      ],
-      components: [
-        [
-          new Discord.MessageButton({
-            customId: "delete",
-            label: "Delete",
-            style: "DANGER",
-          }),
-        ],
       ],
     });
   }

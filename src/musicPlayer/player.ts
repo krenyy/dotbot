@@ -1,11 +1,10 @@
+import * as DiscordVoice from "@discordjs/voice";
 import Discord from "discord.js";
-import DiscordVoice from "@discordjs/voice";
+import { Readable } from "stream";
+import ytdl from "ytdl-core";
 
 import DiscordMusicPlayerFactory from "./factory.js";
 import { DiscordMusicPlayerQueue, DiscordMusicPlayerTrack } from "./queue.js";
-
-import { raw } from "youtube-dl-exec";
-import { Readable } from "stream";
 
 export default class DiscordMusicPlayer {
   private readonly guild: Discord.Guild;
@@ -35,20 +34,7 @@ export default class DiscordMusicPlayer {
   }
 
   async play(entry: DiscordMusicPlayerTrack) {
-    const subprocess = raw(
-      entry.trackData.url,
-      {
-        o: "-",
-        q: true,
-        f: "bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio",
-        r: "100K",
-        noPlaylist: true,
-      },
-      { stdio: ["ignore", "pipe", "ignore"] }
-    );
-
-    const stream = subprocess.stdout;
-
+    const stream = ytdl(entry.trackData.url, { quality: "lowestaudio" });
     this.subscription.player.play(DiscordVoice.createAudioResource(stream));
 
     await this.updateStatusMessage();
@@ -155,18 +141,20 @@ export default class DiscordMusicPlayer {
         ),
       ],
       components: [
-        [
-          new Discord.MessageButton({
-            customId: "music_player_revive",
-            label: "Play",
-            style: "PRIMARY",
-          }),
-          new Discord.MessageButton({
-            customId: "delete",
-            label: "Delete",
-            style: "DANGER",
-          }),
-        ],
+        new Discord.MessageActionRow({
+          components: [
+            new Discord.MessageButton({
+              customId: "music_player_revive",
+              label: "Play",
+              style: "PRIMARY",
+            }),
+            new Discord.MessageButton({
+              customId: "delete",
+              label: "Delete",
+              style: "DANGER",
+            }),
+          ],
+        }),
       ],
     });
 
@@ -186,14 +174,14 @@ export default class DiscordMusicPlayer {
     const author = this.guild.client.users.resolve(current.requestedBy);
 
     const embed = new Discord.MessageEmbed()
-      .setAuthor(author.username, author.avatarURL())
+      .setAuthor({ name: author.username, iconURL: author.avatarURL() })
       .setTitle(current.trackData.title)
       .setDescription("")
       .addField("Status", this.paused ? "Paused" : "Playing", true)
       .addField("Looping", this.looping ? "Yes" : "No", true)
       .setURL(current.trackData.url)
       .setThumbnail(current.trackData.thumbnailURL)
-      .setColor(current.trackData.averageColor as Discord.ColorResolvable);
+      .setColor("BLURPLE");
 
     if (this.queue.length() > 1) {
       let description = "";

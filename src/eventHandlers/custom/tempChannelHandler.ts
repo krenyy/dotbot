@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+import { ChannelTypes } from "discord.js/typings/enums";
 import client from "../../index.js";
 
 export default class TempChannelHandler {
@@ -12,20 +13,21 @@ export default class TempChannelHandler {
 
     const tempChannelName = state.channel.name.slice(this.factoryPrefix.length);
 
+    state.guild.channels.create;
     const categoryChannel = await state.guild.channels.create(
       `${this.tempCategoryPrefix}${tempChannelName}`,
       {
-        type: "category",
+        type: ChannelTypes.GUILD_CATEGORY,
       }
     );
 
     const textChannel = await state.guild.channels.create(tempChannelName, {
       parent: categoryChannel,
-      type: "text",
+      type: ChannelTypes.GUILD_TEXT,
     });
     const voiceChannel = await state.guild.channels.create(tempChannelName, {
       parent: categoryChannel,
-      type: "voice",
+      type: ChannelTypes.GUILD_VOICE,
     });
 
     await state.setChannel(voiceChannel);
@@ -61,10 +63,10 @@ export default class TempChannelHandler {
     for (const [, guild] of client.guilds.cache) {
       for (const [, category] of guild.channels.cache.filter(
         (channel) =>
-          channel.type === "category" &&
+          channel.type === "GUILD_CATEGORY" &&
           channel.name.startsWith(this.tempCategoryPrefix) &&
           !(channel as Discord.CategoryChannel).children
-            .find((child) => child.type === "voice")
+            .find((child) => child.type === "GUILD_VOICE")
             .members.filter((member) => !member.user.bot).size
       )) {
         for (const [, channel] of (category as Discord.CategoryChannel)

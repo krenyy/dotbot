@@ -20,7 +20,7 @@ export default class PlayCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
-    await interaction.defer({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     const member = interaction.member as Discord.GuildMember;
 
@@ -82,7 +82,7 @@ export default class PlayCommand implements SlashCommand {
       embeds: [
         new Discord.MessageEmbed()
           .setDescription("Preparing music for your ears...")
-          .setColor("#000000"),
+          .setColor("BLURPLE"),
       ],
     });
 

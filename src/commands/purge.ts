@@ -8,7 +8,7 @@ export default class PurgeCommand implements SlashCommand {
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
-    await interaction.defer({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     const messagesToDelete = (
       await interaction.channel.messages.fetch({

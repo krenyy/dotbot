@@ -1,4 +1,3 @@
-import { getAverageColor } from "fast-average-color-node";
 import ytdl from "ytdl-core";
 import yts from "yt-search";
 import ytpl from "ytpl";
@@ -19,7 +18,6 @@ export default class YoutubeTrackProvider {
         title: video.title,
         url: video.url,
         thumbnailURL: video.thumbnail,
-        averageColor: (await getAverageColor(video.thumbnail)).hex,
       },
     ] as DiscordMusicPlayerTrackData[];
   }
@@ -33,9 +31,6 @@ export default class YoutubeTrackProvider {
         title: details.title,
         url: details.video_url,
         thumbnailURL: details.thumbnails[details.thumbnails.length - 1].url,
-        averageColor: (
-          await getAverageColor(details.thumbnails[0].url.split("?")[0])
-        ).hex,
       },
     ] as DiscordMusicPlayerTrackData[];
   }
@@ -53,7 +48,6 @@ export default class YoutubeTrackProvider {
         title: item.title,
         url: item.url,
         thumbnailURL: item.bestThumbnail.url,
-        averageColor: (await getAverageColor(item.bestThumbnail.url)).hex,
       }))
     )) as DiscordMusicPlayerTrackData[];
   }

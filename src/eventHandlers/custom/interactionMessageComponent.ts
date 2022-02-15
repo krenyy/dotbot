@@ -10,13 +10,13 @@ export default class InteractionMessageComponentHandler {
   static readonly interaction_handlers: Map<string, InteractionCallback> =
     new Map<string, InteractionCallback>()
       .set("delete", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         await (interaction.message as Discord.Message).delete();
         await interaction.editReply({ content: "Deleted!" });
       })
       .set("music_player_previous", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
@@ -25,7 +25,7 @@ export default class InteractionMessageComponentHandler {
         await interaction.editReply({ content: "Backtracked!" });
       })
       .set("music_player_next", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
@@ -34,7 +34,7 @@ export default class InteractionMessageComponentHandler {
         await interaction.editReply({ content: "Skipped!" });
       })
       .set("music_player_resume", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
@@ -43,7 +43,7 @@ export default class InteractionMessageComponentHandler {
         await interaction.editReply({ content: "Resumed!" });
       })
       .set("music_player_pause", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
@@ -52,7 +52,7 @@ export default class InteractionMessageComponentHandler {
         await interaction.editReply({ content: "Paused!" });
       })
       .set("music_player_stop", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
@@ -61,7 +61,7 @@ export default class InteractionMessageComponentHandler {
         await interaction.editReply({ content: "Stopped!" });
       })
       .set("music_player_loop", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
@@ -72,7 +72,7 @@ export default class InteractionMessageComponentHandler {
         });
       })
       .set("music_player_revive", async (interaction) => {
-        await interaction.defer({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: true });
 
         const channel = interaction.channel as Discord.TextChannel;
         const message = interaction.message as Discord.Message;
@@ -84,12 +84,15 @@ export default class InteractionMessageComponentHandler {
             content: "You're not connected to a voice channel!",
           });
           await message.edit({
-            components: message.components.map((row) =>
-              row.components.map((button) =>
-                new Discord.MessageButton(
-                  button as Discord.MessageButton
-                ).setDisabled(false)
-              )
+            components: message.components.map(
+              (row) =>
+                new Discord.MessageActionRow({
+                  components: row.components.map((button) =>
+                    new Discord.MessageButton(
+                      button as Discord.MessageButton
+                    ).setDisabled(false)
+                  ),
+                })
             ),
           });
           return;
