@@ -1,5 +1,5 @@
-import client from '../index.js';
-import TempChannelHandler from './custom/tempChannelHandler.js';
+import client from "../index.js";
+import TempChannelHandler from "./custom/tempChannelHandler.js";
 
 export default class ReadyHandler {
   static async execute() {
@@ -8,11 +8,11 @@ export default class ReadyHandler {
     client.user.setPresence({
       activities: [
         {
-          name: '/',
-          type: 'LISTENING',
+          name: "/",
+          type: "LISTENING",
         },
       ],
-      status: 'online',
+      status: "online",
     });
 
     await TempChannelHandler.initialCleanup();

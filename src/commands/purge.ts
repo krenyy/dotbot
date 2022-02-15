@@ -1,10 +1,10 @@
-import Discord from 'discord.js';
-import SlashCommand from './base.js';
+import Discord from "discord.js";
+import SlashCommand from "./base.js";
 
 export default class PurgeCommand implements SlashCommand {
   public static readonly data: Discord.ApplicationCommandData = {
-    name: 'purge',
-    description: 'Purges 100 (max) messages from current text channel',
+    name: "purge",
+    description: "Purges 100 (max) messages from current text channel",
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
@@ -22,7 +22,7 @@ export default class PurgeCommand implements SlashCommand {
 
     if (!messagesToDelete.size) {
       await interaction.editReply({
-        content: 'No messages to remove!',
+        content: "No messages to remove!",
       });
       return;
     }

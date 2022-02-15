@@ -1,6 +1,6 @@
-import axios from 'axios';
-import Discord from 'discord.js';
-import DiscordMusicPlayerFactory from '../../musicPlayer/factory.js';
+import axios from "axios";
+import Discord from "discord.js";
+import DiscordMusicPlayerFactory from "../../musicPlayer/factory.js";
 
 type InteractionCallback = (
   interaction: Discord.MessageComponentInteraction
@@ -9,58 +9,58 @@ type InteractionCallback = (
 export default class InteractionMessageComponentHandler {
   static readonly interaction_handlers: Map<string, InteractionCallback> =
     new Map<string, InteractionCallback>()
-      .set('delete', async (interaction) => {
+      .set("delete", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         await (interaction.message as Discord.Message).delete();
-        await interaction.editReply({ content: 'Deleted!' });
+        await interaction.editReply({ content: "Deleted!" });
       })
-      .set('music_player_previous', async (interaction) => {
+      .set("music_player_previous", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
         );
         await musicPlayer.previous();
-        await interaction.editReply({ content: 'Backtracked!' });
+        await interaction.editReply({ content: "Backtracked!" });
       })
-      .set('music_player_next', async (interaction) => {
+      .set("music_player_next", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
         );
         await musicPlayer.next();
-        await interaction.editReply({ content: 'Skipped!' });
+        await interaction.editReply({ content: "Skipped!" });
       })
-      .set('music_player_resume', async (interaction) => {
+      .set("music_player_resume", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
         );
         await musicPlayer.resume();
-        await interaction.editReply({ content: 'Resumed!' });
+        await interaction.editReply({ content: "Resumed!" });
       })
-      .set('music_player_pause', async (interaction) => {
+      .set("music_player_pause", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
         );
         await musicPlayer.pause();
-        await interaction.editReply({ content: 'Paused!' });
+        await interaction.editReply({ content: "Paused!" });
       })
-      .set('music_player_stop', async (interaction) => {
+      .set("music_player_stop", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
           interaction.guild
         );
         await musicPlayer.leave();
-        await interaction.editReply({ content: 'Stopped!' });
+        await interaction.editReply({ content: "Stopped!" });
       })
-      .set('music_player_loop', async (interaction) => {
+      .set("music_player_loop", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const musicPlayer = await DiscordMusicPlayerFactory.get(
@@ -68,10 +68,10 @@ export default class InteractionMessageComponentHandler {
         );
         await musicPlayer.loop();
         await interaction.editReply({
-          content: `${musicPlayer.looping ? 'En' : 'Dis'}abled looping!`,
+          content: `${musicPlayer.looping ? "En" : "Dis"}abled looping!`,
         });
       })
-      .set('music_player_revive', async (interaction) => {
+      .set("music_player_revive", async (interaction) => {
         await interaction.defer({ ephemeral: true });
 
         const channel = interaction.channel as Discord.TextChannel;
@@ -113,8 +113,8 @@ export default class InteractionMessageComponentHandler {
         musicPlayer.message = await channel.send({
           embeds: [
             new Discord.MessageEmbed()
-              .setDescription('Preparing music for your ears...')
-              .setColor('#000000'),
+              .setDescription("Preparing music for your ears...")
+              .setColor("#000000"),
           ],
         });
 
@@ -122,11 +122,11 @@ export default class InteractionMessageComponentHandler {
         musicPlayer.join(voiceChannel);
         musicPlayer.play(musicPlayer.queue.current());
 
-        interaction.editReply('Revived!');
+        interaction.editReply("Revived!");
       });
 
   static async execute(interaction: Discord.MessageComponentInteraction) {
-    if (interaction.customId.startsWith('music_player')) {
+    if (interaction.customId.startsWith("music_player")) {
       const msg = interaction.message as Discord.Message;
 
       const components = msg.components.map(

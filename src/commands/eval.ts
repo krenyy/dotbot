@@ -1,7 +1,7 @@
-import Discord from 'discord.js';
-import SlashCommand from './base.js';
-import js_beautify from 'js-beautify';
-import axios from 'axios';
+import Discord from "discord.js";
+import SlashCommand from "./base.js";
+import js_beautify from "js-beautify";
+import axios from "axios";
 
 const _Discord = Discord;
 const _axios = axios;
@@ -16,13 +16,13 @@ async function sleep(ms: number) {
 
 export default class EvalCommand implements SlashCommand {
   public static readonly data: Discord.ApplicationCommandData = {
-    name: 'eval',
-    description: 'Evaluates a Javascript expression',
+    name: "eval",
+    description: "Evaluates a Javascript expression",
     options: [
       {
-        name: 'expression',
-        description: 'Expression to evaluate',
-        type: 'STRING',
+        name: "expression",
+        description: "Expression to evaluate",
+        type: "STRING",
         required: true,
       },
     ],
@@ -33,21 +33,21 @@ export default class EvalCommand implements SlashCommand {
 
     if (interaction.user !== interaction.client.application.owner) {
       await interaction.editReply({
-        content: 'Only the owner can use this command!',
+        content: "Only the owner can use this command!",
       });
       return;
     }
 
-    const expression = interaction.options.get('expression').value as string;
+    const expression = interaction.options.get("expression").value as string;
 
     if (
-      expression.includes('setTimeout') ||
-      expression.includes('setInterval')
+      expression.includes("setTimeout") ||
+      expression.includes("setInterval")
     ) {
       await interaction.editReply({
         content:
-          'Cannot use `setTimeout` or `setInterval` inside an eval!\n' +
-          'Use special `await sleep(ms)` instead!',
+          "Cannot use `setTimeout` or `setInterval` inside an eval!\n" +
+          "Use special `await sleep(ms)` instead!",
       });
       return;
     }
@@ -57,8 +57,8 @@ export default class EvalCommand implements SlashCommand {
     await interaction.editReply({
       embeds: [
         new Discord.MessageEmbed({
-          title: 'Running...',
-          color: '#0090ff',
+          title: "Running...",
+          color: "#0090ff",
           description: codeBlock,
         }),
       ],
@@ -71,8 +71,8 @@ export default class EvalCommand implements SlashCommand {
       await interaction.editReply({
         embeds: [
           new Discord.MessageEmbed({
-            title: 'Finished!',
-            color: '#00ff00',
+            title: "Finished!",
+            color: "#00ff00",
             description: codeBlock + evalResult,
           }),
         ],
@@ -81,8 +81,8 @@ export default class EvalCommand implements SlashCommand {
       await interaction.editReply({
         embeds: [
           new Discord.MessageEmbed({
-            title: 'Failed!',
-            color: '#ff0000',
+            title: "Failed!",
+            color: "#ff0000",
             description: codeBlock + err,
           }),
         ],

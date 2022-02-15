@@ -1,16 +1,16 @@
-import Discord from 'discord.js';
-import SlashCommand from './base.js';
-import DiscordMusicPlayerFactory from '../musicPlayer/factory.js';
+import Discord from "discord.js";
+import SlashCommand from "./base.js";
+import DiscordMusicPlayerFactory from "../musicPlayer/factory.js";
 
 export default class GotoCommand implements SlashCommand {
   public static readonly data: Discord.ApplicationCommandData = {
-    name: 'goto',
-    description: 'Go to specific entry in the music player queue',
+    name: "goto",
+    description: "Go to specific entry in the music player queue",
     options: [
       {
-        name: 'index',
-        description: 'Index of the entry to go to',
-        type: 'INTEGER',
+        name: "index",
+        description: "Index of the entry to go to",
+        type: "INTEGER",
         required: true,
       },
     ],
@@ -27,7 +27,7 @@ export default class GotoCommand implements SlashCommand {
 
     if (!botIsInVoiceChannel) {
       await interaction.editReply({
-        content: 'Bot is currently not playing!',
+        content: "Bot is currently not playing!",
       });
       return;
     }
@@ -50,11 +50,11 @@ export default class GotoCommand implements SlashCommand {
 
     const player = await DiscordMusicPlayerFactory.get(interaction.guild);
 
-    const fakeIndex = interaction.options.get('index').value as number;
+    const fakeIndex = interaction.options.get("index").value as number;
     const index = fakeIndex - 1;
 
     if (index >= player.queue.length() || index < 0) {
-      interaction.editReply({ content: 'Invalid queue index!' });
+      interaction.editReply({ content: "Invalid queue index!" });
       return;
     }
 

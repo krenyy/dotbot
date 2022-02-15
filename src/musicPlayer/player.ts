@@ -1,11 +1,11 @@
-import Discord from 'discord.js';
-import DiscordVoice from '@discordjs/voice';
+import Discord from "discord.js";
+import DiscordVoice from "@discordjs/voice";
 
-import DiscordMusicPlayerFactory from './factory.js';
-import { DiscordMusicPlayerQueue, DiscordMusicPlayerTrack } from './queue.js';
+import DiscordMusicPlayerFactory from "./factory.js";
+import { DiscordMusicPlayerQueue, DiscordMusicPlayerTrack } from "./queue.js";
 
-import { raw } from 'youtube-dl-exec';
-import { Readable } from 'stream';
+import { raw } from "youtube-dl-exec";
+import { Readable } from "stream";
 
 export default class DiscordMusicPlayer {
   private readonly guild: Discord.Guild;
@@ -38,13 +38,13 @@ export default class DiscordMusicPlayer {
     const subprocess = raw(
       entry.trackData.url,
       {
-        o: '-',
+        o: "-",
         q: true,
-        f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
-        r: '100K',
+        f: "bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio",
+        r: "100K",
         noPlaylist: true,
       },
-      { stdio: ['ignore', 'pipe', 'ignore'] }
+      { stdio: ["ignore", "pipe", "ignore"] }
     );
 
     const stream = subprocess.stdout;
@@ -110,13 +110,13 @@ export default class DiscordMusicPlayer {
     });
     const audioPlayer = DiscordVoice.createAudioPlayer();
 
-    connection.on('stateChange', async (oldState, newState) => {
+    connection.on("stateChange", async (oldState, newState) => {
       if (newState.status === DiscordVoice.VoiceConnectionStatus.Disconnected) {
         await this.leave();
       }
     });
 
-    audioPlayer.on('stateChange', async (oldState, newState) => {
+    audioPlayer.on("stateChange", async (oldState, newState) => {
       if (
         newState.status === DiscordVoice.AudioPlayerStatus.Idle &&
         oldState.status !== DiscordVoice.AudioPlayerStatus.Idle
@@ -125,7 +125,7 @@ export default class DiscordMusicPlayer {
       }
     });
 
-    audioPlayer.on('error', console.error);
+    audioPlayer.on("error", console.error);
 
     this.subscription = connection.subscribe(audioPlayer);
   }
@@ -133,13 +133,13 @@ export default class DiscordMusicPlayer {
   async leave() {
     const date = new Date();
     const dateTimeString = [
-      date.getFullYear().toString().padStart(4, '0'),
-      (date.getMonth() + 1).toString().padStart(2, '0'),
-      date.getDate().toString().padStart(2, '0'),
-      date.getHours().toString().padStart(2, '0'),
-      date.getMinutes().toString().padStart(2, '0'),
-      date.getSeconds().toString().padStart(2, '0'),
-    ].join('-');
+      date.getFullYear().toString().padStart(4, "0"),
+      (date.getMonth() + 1).toString().padStart(2, "0"),
+      date.getDate().toString().padStart(2, "0"),
+      date.getHours().toString().padStart(2, "0"),
+      date.getMinutes().toString().padStart(2, "0"),
+      date.getSeconds().toString().padStart(2, "0"),
+    ].join("-");
 
     await this.message.edit({
       embeds: [],
@@ -151,20 +151,20 @@ export default class DiscordMusicPlayer {
         ),
         new Discord.MessageAttachment(
           Readable.from(this.queue.getFormatted()),
-          'queue.txt'
+          "queue.txt"
         ),
       ],
       components: [
         [
           new Discord.MessageButton({
-            customId: 'music_player_revive',
-            label: 'Play',
-            style: 'PRIMARY',
+            customId: "music_player_revive",
+            label: "Play",
+            style: "PRIMARY",
           }),
           new Discord.MessageButton({
-            customId: 'delete',
-            label: 'Delete',
-            style: 'DANGER',
+            customId: "delete",
+            label: "Delete",
+            style: "DANGER",
           }),
         ],
       ],
@@ -188,15 +188,15 @@ export default class DiscordMusicPlayer {
     const embed = new Discord.MessageEmbed()
       .setAuthor(author.username, author.avatarURL())
       .setTitle(current.trackData.title)
-      .setDescription('')
-      .addField('Status', this.paused ? 'Paused' : 'Playing', true)
-      .addField('Looping', this.looping ? 'Yes' : 'No', true)
+      .setDescription("")
+      .addField("Status", this.paused ? "Paused" : "Playing", true)
+      .addField("Looping", this.looping ? "Yes" : "No", true)
       .setURL(current.trackData.url)
       .setThumbnail(current.trackData.thumbnailURL)
       .setColor(current.trackData.averageColor as Discord.ColorResolvable);
 
     if (this.queue.length() > 1) {
-      let description = '';
+      let description = "";
 
       const previous = this.queue.previous(true);
       const next = this.queue.next(true);
@@ -229,36 +229,36 @@ export default class DiscordMusicPlayer {
 
     const buttons = [
       new Discord.MessageButton({
-        style: 'SECONDARY',
-        customId: 'music_player_loop',
-        label: 'Loop',
+        style: "SECONDARY",
+        customId: "music_player_loop",
+        label: "Loop",
       }),
       new Discord.MessageButton({
-        style: 'SECONDARY',
-        customId: 'music_player_pause',
-        label: 'Pause',
+        style: "SECONDARY",
+        customId: "music_player_pause",
+        label: "Pause",
       }),
       new Discord.MessageButton({
-        style: 'DANGER',
-        customId: 'music_player_stop',
-        label: 'Stop',
+        style: "DANGER",
+        customId: "music_player_stop",
+        label: "Stop",
       }),
       new Discord.MessageButton({
-        style: 'PRIMARY',
-        customId: 'music_player_previous',
-        label: 'Previous',
+        style: "PRIMARY",
+        customId: "music_player_previous",
+        label: "Previous",
       }),
       new Discord.MessageButton({
-        style: 'PRIMARY',
-        customId: 'music_player_next',
-        label: 'Next',
+        style: "PRIMARY",
+        customId: "music_player_next",
+        label: "Next",
       }),
     ];
 
     // Pause / resume button
     buttons[1]
-      .setCustomId(`music_player_${this.paused ? 'resume' : 'pause'}`)
-      .setLabel(this.paused ? 'Resume' : 'Pause');
+      .setCustomId(`music_player_${this.paused ? "resume" : "pause"}`)
+      .setLabel(this.paused ? "Resume" : "Pause");
 
     if (!this.looping) {
       if (this.queue.isAtStart()) buttons[3].setDisabled(true);

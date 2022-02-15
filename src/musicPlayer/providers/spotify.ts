@@ -1,5 +1,5 @@
-import { getTracks } from 'spotify-url-info';
-import YoutubeTrackProvider from './youtube.js';
+import { getTracks } from "spotify-url-info";
+import YoutubeTrackProvider from "./youtube.js";
 
 export default class SpotifyTrackProvider {
   static async get(query: string) {
@@ -7,7 +7,7 @@ export default class SpotifyTrackProvider {
 
     if (tracks.length > 1)
       throw new Error(
-        'Currently, it is not allowed to play whole playlists from Spotify!'
+        "Currently, it is not allowed to play whole playlists from Spotify!"
       );
 
     return (
@@ -16,7 +16,7 @@ export default class SpotifyTrackProvider {
           return await YoutubeTrackProvider.get(
             `${track.name} - ${track.artists
               .map((artist) => artist.name)
-              .join(' ')}`
+              .join(" ")}`
           );
         })
       )

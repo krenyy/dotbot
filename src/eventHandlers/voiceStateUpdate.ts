@@ -1,5 +1,5 @@
-import Discord from 'discord.js';
-import TempChannelHandler from './custom/tempChannelHandler.js';
+import Discord from "discord.js";
+import TempChannelHandler from "./custom/tempChannelHandler.js";
 
 export default class VoiceStateUpdateHandler {
   static async execute(
@@ -8,7 +8,7 @@ export default class VoiceStateUpdateHandler {
   ) {
     if (newState.channel) {
       if (newState.member === newState.member.guild.me && !newState.deaf) {
-        await newState.setDeaf(true, 'Save bandwidth!');
+        await newState.setDeaf(true, "Save bandwidth!");
       }
       if (newState.channel !== oldState.channel) {
         await TempChannelHandler.create(newState);

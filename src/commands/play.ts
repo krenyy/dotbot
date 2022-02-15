@@ -1,19 +1,19 @@
-import Discord from 'discord.js';
-import DiscordMusicPlayerFactory from '../musicPlayer/factory.js';
-import SpotifyTrackProvider from '../musicPlayer/providers/spotify.js';
-import YoutubeTrackProvider from '../musicPlayer/providers/youtube.js';
-import { DiscordMusicPlayerTrackData } from '../musicPlayer/queue.js';
-import SlashCommand from './base.js';
+import Discord from "discord.js";
+import DiscordMusicPlayerFactory from "../musicPlayer/factory.js";
+import SpotifyTrackProvider from "../musicPlayer/providers/spotify.js";
+import YoutubeTrackProvider from "../musicPlayer/providers/youtube.js";
+import { DiscordMusicPlayerTrackData } from "../musicPlayer/queue.js";
+import SlashCommand from "./base.js";
 
 export default class PlayCommand implements SlashCommand {
   public static readonly data: Discord.ApplicationCommandData = {
-    name: 'play',
-    description: 'Play a song!',
+    name: "play",
+    description: "Play a song!",
     options: [
       {
-        name: 'query',
-        description: 'YouTube URL or search query',
-        type: 'STRING',
+        name: "query",
+        description: "YouTube URL or search query",
+        type: "STRING",
         required: true,
       },
     ],
@@ -46,13 +46,13 @@ export default class PlayCommand implements SlashCommand {
 
     const player = await DiscordMusicPlayerFactory.get(interaction.guild);
 
-    const query = interaction.options.get('query').value as string;
+    const query = interaction.options.get("query").value as string;
 
     let tracks: DiscordMusicPlayerTrackData[] = [];
     try {
       tracks =
-        query.startsWith('https://open.spotify.com/') ||
-        query.startsWith('https://play.spotify.com/')
+        query.startsWith("https://open.spotify.com/") ||
+        query.startsWith("https://play.spotify.com/")
           ? await SpotifyTrackProvider.get(query)
           : await YoutubeTrackProvider.get(query);
     } catch (e) {
@@ -61,7 +61,7 @@ export default class PlayCommand implements SlashCommand {
     }
 
     if (!tracks.length) {
-      await interaction.editReply({ content: 'No videos found!' });
+      await interaction.editReply({ content: "No videos found!" });
       return;
     }
 
@@ -73,7 +73,7 @@ export default class PlayCommand implements SlashCommand {
     }
 
     if (player.queue.length() - tracks.length > 0) {
-      await interaction.editReply({ content: 'Added to queue!' });
+      await interaction.editReply({ content: "Added to queue!" });
       await player.updateStatusMessage();
       return;
     }
@@ -81,12 +81,12 @@ export default class PlayCommand implements SlashCommand {
     player.message = await interaction.channel.send({
       embeds: [
         new Discord.MessageEmbed()
-          .setDescription('Preparing music for your ears...')
-          .setColor('#000000'),
+          .setDescription("Preparing music for your ears...")
+          .setColor("#000000"),
       ],
     });
 
-    await interaction.editReply({ content: 'Added to queue!' });
+    await interaction.editReply({ content: "Added to queue!" });
 
     const voice = member.voice;
     const voiceChannel = voice.channel as Discord.VoiceChannel;

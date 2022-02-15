@@ -1,8 +1,8 @@
-import { getAverageColor } from 'fast-average-color-node';
-import ytdl from 'ytdl-core';
-import yts from 'yt-search';
-import ytpl from 'ytpl';
-import { DiscordMusicPlayerTrackData } from '../queue';
+import { getAverageColor } from "fast-average-color-node";
+import ytdl from "ytdl-core";
+import yts from "yt-search";
+import ytpl from "ytpl";
+import { DiscordMusicPlayerTrackData } from "../queue";
 
 export default class YoutubeTrackProvider {
   private static playlistItemLimit: number = 100;
@@ -10,7 +10,7 @@ export default class YoutubeTrackProvider {
   static async getFromSearch(query: string) {
     const searchResults = (await yts.search(query)).videos;
 
-    if (!searchResults.length) throw new Error('No videos found!');
+    if (!searchResults.length) throw new Error("No videos found!");
 
     const video = searchResults[0];
 
@@ -34,7 +34,7 @@ export default class YoutubeTrackProvider {
         url: details.video_url,
         thumbnailURL: details.thumbnails[details.thumbnails.length - 1].url,
         averageColor: (
-          await getAverageColor(details.thumbnails[0].url.split('?')[0])
+          await getAverageColor(details.thumbnails[0].url.split("?")[0])
         ).hex,
       },
     ] as DiscordMusicPlayerTrackData[];

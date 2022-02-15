@@ -1,5 +1,5 @@
-import Discord from 'discord.js';
-import DiscordMusicPlayer from './player.js';
+import Discord from "discord.js";
+import DiscordMusicPlayer from "./player.js";
 
 export default class DiscordMusicPlayerFactory {
   private static guildPlayers = new Map<`${bigint}`, DiscordMusicPlayer>();

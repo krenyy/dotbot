@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import Discord from "discord.js";
 
 export default class SlashCommand {
   public static readonly data: Discord.ApplicationCommandData;

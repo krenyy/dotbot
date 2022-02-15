@@ -1,12 +1,12 @@
-import Discord from 'discord.js';
-import { Readable } from 'stream';
-import DiscordMusicPlayerFactory from '../musicPlayer/factory.js';
-import SlashCommand from './base.js';
+import Discord from "discord.js";
+import { Readable } from "stream";
+import DiscordMusicPlayerFactory from "../musicPlayer/factory.js";
+import SlashCommand from "./base.js";
 
 export default class QueueCommand implements SlashCommand {
   public static readonly data: Discord.ApplicationCommandData = {
-    name: 'queue',
-    description: 'Show current music player queue',
+    name: "queue",
+    description: "Show current music player queue",
   };
 
   static async execute(interaction: Discord.CommandInteraction) {
@@ -32,15 +32,15 @@ export default class QueueCommand implements SlashCommand {
       files: [
         new Discord.MessageAttachment(
           Readable.from(formattedQueue),
-          'queue.txt'
+          "queue.txt"
         ),
       ],
       components: [
         [
           new Discord.MessageButton({
-            customId: 'delete',
-            label: 'Delete',
-            style: 'DANGER',
+            customId: "delete",
+            label: "Delete",
+            style: "DANGER",
           }),
         ],
       ],

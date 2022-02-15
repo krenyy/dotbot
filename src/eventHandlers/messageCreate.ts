@@ -1,5 +1,5 @@
-import Discord from 'discord.js';
-import InteractionCommandHandler from './custom/interactionCommand.js';
+import Discord from "discord.js";
+import InteractionCommandHandler from "./custom/interactionCommand.js";
 
 export default class MessageCreateHandler {
   static async execute(message: Discord.Message) {
@@ -7,17 +7,17 @@ export default class MessageCreateHandler {
 
     if (message.author === message.client.application.owner) {
       switch (message.content) {
-        case '!deployGlobal': {
+        case "!deployGlobal": {
           await InteractionCommandHandler.register(
             message.client.application.commands
           );
           break;
         }
-        case '!deployGuild': {
+        case "!deployGuild": {
           await InteractionCommandHandler.register(message.guild.commands);
           break;
         }
-        case '!clearGuild': {
+        case "!clearGuild": {
           await message.guild.commands.set([]);
           break;
         }
@@ -26,7 +26,7 @@ export default class MessageCreateHandler {
         }
       }
 
-      await message.reply('Action performed!');
+      await message.reply("Action performed!");
     }
   }
 }
