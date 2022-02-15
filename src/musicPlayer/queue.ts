@@ -93,7 +93,7 @@ export class DiscordMusicPlayerQueue {
     const table = new consoleTablePrinter.Table();
     this.items.forEach((item, index) => {
       table.addRow({
-        "": index === this.pos ? "▶️" : " ",
+        "": index === this.pos ? ">" : " ",
         index: index + 1,
         title: item.trackData.title,
         "requested by": client.users.resolve(item.requestedBy).username,
